@@ -1,9 +1,9 @@
-```javascript
+javascript
 // ============================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // ============================================================
 
-const YOUTUBE_API_KEY = "SEM_VLOZ_NOVY_API_KLIC";
+const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
 
 const YOUTUBE_HANDLE = "@josefcap153";
 
