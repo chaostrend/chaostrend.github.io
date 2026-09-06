@@ -1,11 +1,10 @@
+```javascript
 // ============================================================
-// CHAOS TREND – AUTOMATICKÉ NAČÍTÁNÍ VIDEÍ Z YOUTUBE
+// CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // ============================================================
 
-// SEM VLOŽ NOVÝ API KLÍČ Z GOOGLE CLOUD
 const YOUTUBE_API_KEY = "SEM_VLOZ_NOVY_API_KLIC";
 
-// YouTube kanál CHAOS TREND
 const YOUTUBE_HANDLE = "@josefcap153";
 
 
@@ -38,7 +37,7 @@ async function getYouTubeUploadsPlaylist() {
 
 
 // ============================================================
-// 2. NAČTENÍ NEJNOVĚJŠÍCH VIDEÍ
+// 2. NAČTENÍ 10 NEJNOVĚJŠÍCH VIDEÍ
 // ============================================================
 
 async function getLatestYouTubeVideos(uploadsPlaylistId) {
@@ -63,13 +62,13 @@ async function getLatestYouTubeVideos(uploadsPlaylistId) {
 
 
 // ============================================================
-// 3. PŘÍPRAVA DAT
+// 3. PŘÍPRAVA VIDEÍ
 // ============================================================
 
 function prepareYouTubeVideos(items) {
 
     return items
-        .map(item => {
+        .map(function(item) {
 
             const videoId =
                 item.contentDetails?.videoId ||
@@ -79,172 +78,193 @@ function prepareYouTubeVideos(items) {
                 return null;
             }
 
-            const thumbnails =
-                item.snippet?.thumbnails || {};
-
-            const thumbnail =
-                thumbnails.maxres?.url ||
-                thumbnails.standard?.url ||
-                thumbnails.high?.url ||
-                thumbnails.medium?.url ||
-                thumbnails.default?.url;
-
             return {
+
                 id: videoId,
-                title: item.snippet?.title || "Video CHAOS TREND",
+
+                title:
+                    item.snippet?.title ||
+                    "Video CHAOS TREND",
+
                 date:
                     item.contentDetails?.videoPublishedAt ||
                     item.snippet?.publishedAt ||
-                    "",
-                thumbnail: thumbnail,
-                url:
-                    "https://www.youtube.com/watch?v=" +
-                    videoId
+                    ""
+
             };
+
         })
-        .filter(video => video !== null);
+        .filter(function(video) {
+            return video !== null;
+        });
 }
 
 
 // ============================================================
-// 4. BEZPEČNÉ VLOŽENÍ TEXTU DO HTML
+// 4. HLAVNÍ VIDEO
 // ============================================================
 
-function escapeHTML(text) {
+function displayMainVideo(video) {
 
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    const iframe =
+        document.getElementById(
+            "chaos-opinion-main-video"
+        );
+
+    const placeholder =
+        document.getElementById(
+            "chaos-opinion-placeholder"
+        );
+
+    if (!iframe || !video) {
+        return;
+    }
+
+    iframe.src =
+        "https://www.youtube.com/embed/" +
+        video.id +
+        "?autoplay=0&mute=1&playsinline=1&rel=0";
+
+    iframe.title =
+        video.title;
+
+    iframe.style.display =
+        "block";
+
+    if (placeholder) {
+
+        placeholder.style.display =
+            "none";
+
+    }
+
 }
 
 
 // ============================================================
-// 5. FORMÁT DATA
+// 5. MALÁ VIDEA
 // ============================================================
 
-function formatYouTubeDate(date) {
+function displayHistoryVideos(videos) {
+
+    const container =
+        document.getElementById(
+            "chaos-opinion-history"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = "";
+
+
+    /*
+       VIDEO 0 = velké hlavní video
+
+       VIDEO 1 = první malé okno
+       VIDEO 2 = druhé malé okno
+       VIDEO 3 = třetí malé okno
+       ...
+    */
+
+
+    for (
+        let i = 1;
+        i < videos.length;
+        i++
+    ) {
+
+        const video =
+            videos[i];
+
+
+        const windowElement =
+            document.createElement("div");
+
+        windowElement.className =
+            "chaos-opinion-item";
+
+
+        // ----------------------------------------------------
+        // YOUTUBE VIDEO
+        // ----------------------------------------------------
+
+        const iframe =
+            document.createElement("iframe");
+
+        iframe.src =
+            "https://www.youtube.com/embed/" +
+            video.id +
+            "?autoplay=0&mute=1&playsinline=1&rel=0";
+
+        iframe.title =
+            video.title;
+
+        iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+        iframe.allowFullscreen =
+            true;
+
+
+        windowElement.appendChild(
+            iframe
+        );
+
+
+        // ----------------------------------------------------
+        // DATUM
+        // ----------------------------------------------------
+
+        const date =
+            document.createElement("div");
+
+        date.className =
+            "chaos-opinion-date";
+
+        date.textContent =
+            formatDate(video.date);
+
+
+        windowElement.appendChild(
+            date
+        );
+
+
+        container.appendChild(
+            windowElement
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// 6. FORMÁT DATA
+// ============================================================
+
+function formatDate(date) {
 
     if (!date) {
         return "";
     }
 
-    return new Date(date).toLocaleDateString("cs-CZ", {
-        day: "numeric",
-        month: "numeric",
-        year: "numeric"
-    });
+    return new Date(date).toLocaleDateString(
+        "cs-CZ",
+        {
+            day: "numeric",
+            month: "numeric",
+            year: "numeric"
+        }
+    );
+
 }
 
 
 // ============================================================
-// 6. ZOBRAZENÍ HLAVNÍHO NEJNOVĚJŠÍHO VIDEA
-// ============================================================
-
-function displayMainYouTubeVideo(video) {
-
-    if (!video) {
-        return;
-    }
-
-    const mainVideo =
-        document.getElementById("chaos-opinion-main-video");
-
-    const placeholder =
-        document.getElementById("chaos-opinion-placeholder");
-
-    if (!mainVideo) {
-        return;
-    }
-
-    mainVideo.src =
-        "https://www.youtube.com/embed/" +
-        video.id +
-        "?autoplay=0&mute=1&playsinline=1&rel=0";
-
-    mainVideo.style.display = "block";
-
-    if (placeholder) {
-        placeholder.style.display = "none";
-    }
-}
-
-
-// ============================================================
-// 7. ZOBRAZENÍ HISTORIE VIDEÍ – THUMBNAILY
-// ============================================================
-
-function displayYouTubeHistory(videos) {
-
-    const historyContainer =
-        document.getElementById("chaos-opinion-history");
-
-    if (!historyContainer) {
-        return;
-    }
-
-    historyContainer.innerHTML = "";
-
-    videos.forEach(video => {
-
-        const item =
-            document.createElement("a");
-
-        item.href = video.url;
-        item.target = "_blank";
-        item.rel = "noopener noreferrer";
-
-        item.className =
-            "chaos-opinion-item";
-
-        item.style.textDecoration = "none";
-        item.style.color = "inherit";
-        item.style.display = "block";
-        item.style.overflow = "hidden";
-
-        item.innerHTML = `
-            <img
-                src="${escapeHTML(video.thumbnail)}"
-                alt="${escapeHTML(video.title)}"
-                loading="lazy"
-                style="
-                    width:100%;
-                    aspect-ratio:16/9;
-                    object-fit:cover;
-                    display:block;
-                "
-            >
-
-            <div
-                style="
-                    padding:10px 12px 4px;
-                    font-weight:bold;
-                    line-height:1.35;
-                "
-            >
-                ${escapeHTML(video.title)}
-            </div>
-
-            <div
-                style="
-                    padding:0 12px 12px;
-                    font-size:0.85rem;
-                    opacity:0.7;
-                "
-            >
-                ${formatYouTubeDate(video.date)}
-            </div>
-        `;
-
-        historyContainer.appendChild(item);
-    });
-}
-
-
-// ============================================================
-// 8. HLAVNÍ FUNKCE
+// 7. HLAVNÍ FUNKCE
 // ============================================================
 
 async function loadChaosTrendYouTube() {
@@ -255,48 +275,63 @@ async function loadChaosTrendYouTube() {
             "CHAOS TREND: načítám YouTube videa..."
         );
 
+
         const uploadsPlaylist =
             await getYouTubeUploadsPlaylist();
+
 
         console.log(
             "CHAOS TREND: uploads playlist:",
             uploadsPlaylist
         );
 
+
         const items =
             await getLatestYouTubeVideos(
                 uploadsPlaylist
             );
 
+
         const videos =
             prepareYouTubeVideos(items);
+
 
         console.log(
             "CHAOS TREND: načtená videa:",
             videos
         );
 
-        // Uložíme data pro případné další použití.
+
         window.chaosTrendYouTubeVideos =
             videos;
 
-        // První video = nejnovější video.
+
+        // ----------------------------------------------------
+        // VIDEO 1 → VELKÉ OKNO
+        // ----------------------------------------------------
+
         if (videos.length > 0) {
 
-            displayMainYouTubeVideo(
+            displayMainVideo(
                 videos[0]
             );
+
         }
 
-        // Zobrazíme všech 10 videí
-        // jako obrázky + názvy + datum.
-        displayYouTubeHistory(
+
+        // ----------------------------------------------------
+        // VIDEO 2–10 → MALÁ OKNA
+        // ----------------------------------------------------
+
+        displayHistoryVideos(
             videos
         );
+
 
         console.log(
             "CHAOS TREND: YouTube API funguje."
         );
+
 
     } catch (error) {
 
@@ -304,7 +339,9 @@ async function loadChaosTrendYouTube() {
             "CHAOS TREND – chyba YouTube API:",
             error
         );
+
     }
+
 }
 
 
@@ -313,3 +350,4 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
+```
