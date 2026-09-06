@@ -7,7 +7,7 @@
 // API KLÍČ
 // ============================================================
 
-const YOUTUBE_API_KEY = "SEM_VLOZ_SVŮJ_API_KLÍČ";
+const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
 
 
 // ============================================================
