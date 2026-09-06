@@ -2,16 +2,16 @@
 // CHAOS TREND – AUTOMATICKÉ NAČÍTÁNÍ VIDEÍ Z YOUTUBE
 // ============================================================
 
-// SEM VLOŽ SVŮJ API KLÍČ Z GOOGLE CLOUD
-const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
+// SEM VLOŽ NOVÝ API KLÍČ Z GOOGLE CLOUD
+const YOUTUBE_API_KEY = "SEM_VLOZ_NOVY_API_KLIC";
 
 // YouTube kanál CHAOS TREND
 const YOUTUBE_HANDLE = "@josefcap153";
 
 
-// ------------------------------------------------------------
-// 1. Získání ID kanálu a jeho uploads playlistu
-// ------------------------------------------------------------
+// ============================================================
+// 1. ZÍSKÁNÍ UPLOADS PLAYLISTU
+// ============================================================
 
 async function getYouTubeUploadsPlaylist() {
 
@@ -37,9 +37,9 @@ async function getYouTubeUploadsPlaylist() {
 }
 
 
-// ------------------------------------------------------------
-// 2. Načtení nejnovějších videí
-// ------------------------------------------------------------
+// ============================================================
+// 2. NAČTENÍ NEJNOVĚJŠÍCH VIDEÍ
+// ============================================================
 
 async function getLatestYouTubeVideos(uploadsPlaylistId) {
 
@@ -62,46 +62,198 @@ async function getLatestYouTubeVideos(uploadsPlaylistId) {
 }
 
 
-// ------------------------------------------------------------
-// 3. Převod YouTube dat do jednoduchého formátu
-// ------------------------------------------------------------
+// ============================================================
+// 3. PŘÍPRAVA DAT
+// ============================================================
 
 function prepareYouTubeVideos(items) {
 
-    return items.map(item => {
+    return items
+        .map(item => {
 
-        const videoId =
-            item.contentDetails.videoId ||
-            item.snippet.resourceId.videoId;
+            const videoId =
+                item.contentDetails?.videoId ||
+                item.snippet?.resourceId?.videoId;
 
-        const thumbnail =
-            item.snippet.thumbnails.maxres?.url ||
-            item.snippet.thumbnails.standard?.url ||
-            item.snippet.thumbnails.high?.url ||
-            item.snippet.thumbnails.medium?.url ||
-            item.snippet.thumbnails.default?.url;
+            if (!videoId) {
+                return null;
+            }
 
-        return {
-            id: videoId,
-            title: item.snippet.title,
-            date: item.contentDetails.videoPublishedAt ||
-                  item.snippet.publishedAt,
-            thumbnail: thumbnail,
-            url: "https://www.youtube.com/watch?v=" + videoId
-        };
+            const thumbnails =
+                item.snippet?.thumbnails || {};
+
+            const thumbnail =
+                thumbnails.maxres?.url ||
+                thumbnails.standard?.url ||
+                thumbnails.high?.url ||
+                thumbnails.medium?.url ||
+                thumbnails.default?.url;
+
+            return {
+                id: videoId,
+                title: item.snippet?.title || "Video CHAOS TREND",
+                date:
+                    item.contentDetails?.videoPublishedAt ||
+                    item.snippet?.publishedAt ||
+                    "",
+                thumbnail: thumbnail,
+                url:
+                    "https://www.youtube.com/watch?v=" +
+                    videoId
+            };
+        })
+        .filter(video => video !== null);
+}
+
+
+// ============================================================
+// 4. BEZPEČNÉ VLOŽENÍ TEXTU DO HTML
+// ============================================================
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+// ============================================================
+// 5. FORMÁT DATA
+// ============================================================
+
+function formatYouTubeDate(date) {
+
+    if (!date) {
+        return "";
+    }
+
+    return new Date(date).toLocaleDateString("cs-CZ", {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric"
     });
 }
 
 
-// ------------------------------------------------------------
-// 4. Spuštění celého načítání
-// ------------------------------------------------------------
+// ============================================================
+// 6. ZOBRAZENÍ HLAVNÍHO NEJNOVĚJŠÍHO VIDEA
+// ============================================================
+
+function displayMainYouTubeVideo(video) {
+
+    if (!video) {
+        return;
+    }
+
+    const mainVideo =
+        document.getElementById("chaos-opinion-main-video");
+
+    const placeholder =
+        document.getElementById("chaos-opinion-placeholder");
+
+    if (!mainVideo) {
+        return;
+    }
+
+    mainVideo.src =
+        "https://www.youtube.com/embed/" +
+        video.id +
+        "?autoplay=0&mute=1&playsinline=1&rel=0";
+
+    mainVideo.style.display = "block";
+
+    if (placeholder) {
+        placeholder.style.display = "none";
+    }
+}
+
+
+// ============================================================
+// 7. ZOBRAZENÍ HISTORIE VIDEÍ – THUMBNAILY
+// ============================================================
+
+function displayYouTubeHistory(videos) {
+
+    const historyContainer =
+        document.getElementById("chaos-opinion-history");
+
+    if (!historyContainer) {
+        return;
+    }
+
+    historyContainer.innerHTML = "";
+
+    videos.forEach(video => {
+
+        const item =
+            document.createElement("a");
+
+        item.href = video.url;
+        item.target = "_blank";
+        item.rel = "noopener noreferrer";
+
+        item.className =
+            "chaos-opinion-item";
+
+        item.style.textDecoration = "none";
+        item.style.color = "inherit";
+        item.style.display = "block";
+        item.style.overflow = "hidden";
+
+        item.innerHTML = `
+            <img
+                src="${escapeHTML(video.thumbnail)}"
+                alt="${escapeHTML(video.title)}"
+                loading="lazy"
+                style="
+                    width:100%;
+                    aspect-ratio:16/9;
+                    object-fit:cover;
+                    display:block;
+                "
+            >
+
+            <div
+                style="
+                    padding:10px 12px 4px;
+                    font-weight:bold;
+                    line-height:1.35;
+                "
+            >
+                ${escapeHTML(video.title)}
+            </div>
+
+            <div
+                style="
+                    padding:0 12px 12px;
+                    font-size:0.85rem;
+                    opacity:0.7;
+                "
+            >
+                ${formatYouTubeDate(video.date)}
+            </div>
+        `;
+
+        historyContainer.appendChild(item);
+    });
+}
+
+
+// ============================================================
+// 8. HLAVNÍ FUNKCE
+// ============================================================
 
 async function loadChaosTrendYouTube() {
 
     try {
 
-        console.log("CHAOS TREND: načítám YouTube videa...");
+        console.log(
+            "CHAOS TREND: načítám YouTube videa..."
+        );
 
         const uploadsPlaylist =
             await getYouTubeUploadsPlaylist();
@@ -112,7 +264,9 @@ async function loadChaosTrendYouTube() {
         );
 
         const items =
-            await getLatestYouTubeVideos(uploadsPlaylist);
+            await getLatestYouTubeVideos(
+                uploadsPlaylist
+            );
 
         const videos =
             prepareYouTubeVideos(items);
@@ -122,9 +276,23 @@ async function loadChaosTrendYouTube() {
             videos
         );
 
-        // Dočasně pouze zobrazíme výsledek
-        // v konzoli pro kontrolu funkčnosti.
-        window.chaosTrendYouTubeVideos = videos;
+        // Uložíme data pro případné další použití.
+        window.chaosTrendYouTubeVideos =
+            videos;
+
+        // První video = nejnovější video.
+        if (videos.length > 0) {
+
+            displayMainYouTubeVideo(
+                videos[0]
+            );
+        }
+
+        // Zobrazíme všech 10 videí
+        // jako obrázky + názvy + datum.
+        displayYouTubeHistory(
+            videos
+        );
 
         console.log(
             "CHAOS TREND: YouTube API funguje."
@@ -140,8 +308,8 @@ async function loadChaosTrendYouTube() {
 }
 
 
-// ------------------------------------------------------------
+// ============================================================
 // START
-// ------------------------------------------------------------
+// ============================================================
 
-loadChaosTrendYouTube(); 
+loadChaosTrendYouTube();
