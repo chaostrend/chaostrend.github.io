@@ -1,9 +1,18 @@
-javascript
 // ============================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // ============================================================
 
-const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
+
+// ============================================================
+// API KLÍČ
+// ============================================================
+
+const YOUTUBE_API_KEY = "SEM_VLOZ_SVŮJ_API_KLÍČ";
+
+
+// ============================================================
+// YOUTUBE KANÁL
+// ============================================================
 
 const YOUTUBE_HANDLE = "@josefcap153";
 
@@ -17,47 +26,89 @@ async function getYouTubeUploadsPlaylist() {
     const url =
         "https://www.googleapis.com/youtube/v3/channels" +
         "?part=contentDetails" +
-        "&forHandle=" + encodeURIComponent(YOUTUBE_HANDLE) +
-        "&key=" + encodeURIComponent(YOUTUBE_API_KEY);
+        "&forHandle=" +
+        encodeURIComponent(YOUTUBE_HANDLE) +
+        "&key=" +
+        encodeURIComponent(YOUTUBE_API_KEY);
 
     const response = await fetch(url);
 
     if (!response.ok) {
-        throw new Error("Nepodařilo se načíst YouTube kanál.");
+
+        const errorText = await response.text();
+
+        throw new Error(
+            "YouTube kanál se nepodařilo načíst. " +
+            response.status +
+            " " +
+            errorText
+        );
+
     }
 
     const data = await response.json();
 
-    if (!data.items || data.items.length === 0) {
-        throw new Error("YouTube kanál nebyl nalezen.");
+    if (
+        !data.items ||
+        data.items.length === 0
+    ) {
+
+        throw new Error(
+            "YouTube kanál nebyl nalezen."
+        );
+
     }
 
-    return data.items[0].contentDetails.relatedPlaylists.uploads;
+    return data.items[0]
+        .contentDetails
+        .relatedPlaylists
+        .uploads;
+
 }
 
 
 // ============================================================
-// 2. NAČTENÍ 10 NEJNOVĚJŠÍCH VIDEÍ
+// 2. NAČTENÍ VIDEÍ
 // ============================================================
 
-async function getLatestYouTubeVideos(uploadsPlaylistId) {
+async function getLatestYouTubeVideos(
+    uploadsPlaylistId
+) {
 
     const url =
         "https://www.googleapis.com/youtube/v3/playlistItems" +
         "?part=snippet,contentDetails" +
-        "&playlistId=" + encodeURIComponent(uploadsPlaylistId) +
+        "&playlistId=" +
+        encodeURIComponent(uploadsPlaylistId) +
         "&maxResults=10" +
-        "&key=" + encodeURIComponent(YOUTUBE_API_KEY);
+        "&key=" +
+        encodeURIComponent(YOUTUBE_API_KEY);
+
 
     const response = await fetch(url);
 
+
     if (!response.ok) {
-        throw new Error("Nepodařilo se načíst videa z YouTube.");
+
+        const errorText =
+            await response.text();
+
+        throw new Error(
+            "Videa z YouTube se nepodařilo načíst. " +
+            response.status +
+            " " +
+            errorText
+        );
+
     }
 
-    const data = await response.json();
+
+    const data =
+        await response.json();
+
 
     return data.items || [];
+
 }
 
 
@@ -68,15 +119,33 @@ async function getLatestYouTubeVideos(uploadsPlaylistId) {
 function prepareYouTubeVideos(items) {
 
     return items
+
         .map(function(item) {
 
             const videoId =
                 item.contentDetails?.videoId ||
                 item.snippet?.resourceId?.videoId;
 
+
             if (!videoId) {
+
                 return null;
+
             }
+
+
+            const thumbnails =
+                item.snippet?.thumbnails || {};
+
+
+            const thumbnail =
+                thumbnails.maxres?.url ||
+                thumbnails.standard?.url ||
+                thumbnails.high?.url ||
+                thumbnails.medium?.url ||
+                thumbnails.default?.url ||
+                "";
+
 
             return {
 
@@ -89,19 +158,29 @@ function prepareYouTubeVideos(items) {
                 date:
                     item.contentDetails?.videoPublishedAt ||
                     item.snippet?.publishedAt ||
-                    ""
+                    "",
+
+                thumbnail: thumbnail,
+
+                url:
+                    "https://www.youtube.com/watch?v=" +
+                    videoId
 
             };
 
         })
+
         .filter(function(video) {
+
             return video !== null;
+
         });
+
 }
 
 
 // ============================================================
-// 4. HLAVNÍ VIDEO
+// 4. ZOBRAZENÍ HLAVNÍHO VIDEA
 // ============================================================
 
 function displayMainVideo(video) {
@@ -111,25 +190,37 @@ function displayMainVideo(video) {
             "chaos-opinion-main-video"
         );
 
+
     const placeholder =
         document.getElementById(
             "chaos-opinion-placeholder"
         );
 
+
     if (!iframe || !video) {
+
+        console.error(
+            "CHAOS TREND: hlavní video nebo jeho kontejner nebyl nalezen."
+        );
+
         return;
+
     }
+
 
     iframe.src =
         "https://www.youtube.com/embed/" +
         video.id +
         "?autoplay=0&mute=1&playsinline=1&rel=0";
 
+
     iframe.title =
         video.title;
 
+
     iframe.style.display =
         "block";
+
 
     if (placeholder) {
 
@@ -138,11 +229,18 @@ function displayMainVideo(video) {
 
     }
 
+
+    console.log(
+        "CHAOS TREND: hlavní video:",
+        video.title,
+        video.id
+    );
+
 }
 
 
 // ============================================================
-// 5. MALÁ VIDEA
+// 5. ZOBRAZENÍ MALÝCH VIDEÍ
 // ============================================================
 
 function displayHistoryVideos(videos) {
@@ -152,20 +250,40 @@ function displayHistoryVideos(videos) {
             "chaos-opinion-history"
         );
 
+
     if (!container) {
+
+        console.error(
+            "CHAOS TREND: kontejner malých videí nebyl nalezen."
+        );
+
         return;
+
     }
+
 
     container.innerHTML = "";
 
 
     /*
-       VIDEO 0 = velké hlavní video
+        VIDEO 0
+        = nejnovější video
+        = velké hlavní okno
 
-       VIDEO 1 = první malé okno
-       VIDEO 2 = druhé malé okno
-       VIDEO 3 = třetí malé okno
-       ...
+
+        VIDEO 1
+        = první malé okno
+
+
+        VIDEO 2
+        = druhé malé okno
+
+
+        VIDEO 3
+        = třetí malé okno
+
+
+        atd.
     */
 
 
@@ -179,36 +297,49 @@ function displayHistoryVideos(videos) {
             videos[i];
 
 
-        const windowElement =
+        // ----------------------------------------------------
+        // KARTA MALÉHO VIDEA
+        // ----------------------------------------------------
+
+        const item =
             document.createElement("div");
 
-        windowElement.className =
+
+        item.className =
             "chaos-opinion-item";
 
 
         // ----------------------------------------------------
-        // YOUTUBE VIDEO
+        // YOUTUBE IFRAME
         // ----------------------------------------------------
 
         const iframe =
             document.createElement("iframe");
+
 
         iframe.src =
             "https://www.youtube.com/embed/" +
             video.id +
             "?autoplay=0&mute=1&playsinline=1&rel=0";
 
+
         iframe.title =
             video.title;
 
+
+        iframe.loading =
+            "lazy";
+
+
         iframe.allow =
             "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
 
         iframe.allowFullscreen =
             true;
 
 
-        windowElement.appendChild(
+        item.appendChild(
             iframe
         );
 
@@ -220,20 +351,33 @@ function displayHistoryVideos(videos) {
         const date =
             document.createElement("div");
 
+
         date.className =
             "chaos-opinion-date";
+
 
         date.textContent =
             formatDate(video.date);
 
 
-        windowElement.appendChild(
+        item.appendChild(
             date
         );
 
 
+        // ----------------------------------------------------
+        // PŘIDÁNÍ DO HISTORIE
+        // ----------------------------------------------------
+
         container.appendChild(
-            windowElement
+            item
+        );
+
+
+        console.log(
+            "CHAOS TREND: malé video:",
+            video.title,
+            video.id
         );
 
     }
@@ -248,17 +392,21 @@ function displayHistoryVideos(videos) {
 function formatDate(date) {
 
     if (!date) {
+
         return "";
+
     }
 
-    return new Date(date).toLocaleDateString(
-        "cs-CZ",
-        {
-            day: "numeric",
-            month: "numeric",
-            year: "numeric"
-        }
-    );
+
+    return new Date(date)
+        .toLocaleDateString(
+            "cs-CZ",
+            {
+                day: "numeric",
+                month: "numeric",
+                year: "numeric"
+            }
+        );
 
 }
 
@@ -276,6 +424,10 @@ async function loadChaosTrendYouTube() {
         );
 
 
+        // ----------------------------------------------------
+        // ZÍSKÁNÍ UPLOADS PLAYLISTU
+        // ----------------------------------------------------
+
         const uploadsPlaylist =
             await getYouTubeUploadsPlaylist();
 
@@ -286,11 +438,25 @@ async function loadChaosTrendYouTube() {
         );
 
 
+        // ----------------------------------------------------
+        // NAČTENÍ VIDEÍ
+        // ----------------------------------------------------
+
         const items =
             await getLatestYouTubeVideos(
                 uploadsPlaylist
             );
 
+
+        console.log(
+            "CHAOS TREND: počet položek z YouTube:",
+            items.length
+        );
+
+
+        // ----------------------------------------------------
+        // PŘÍPRAVA DAT
+        // ----------------------------------------------------
 
         const videos =
             prepareYouTubeVideos(items);
@@ -302,12 +468,16 @@ async function loadChaosTrendYouTube() {
         );
 
 
+        // ----------------------------------------------------
+        // ULOŽENÍ DO WINDOW
+        // ----------------------------------------------------
+
         window.chaosTrendYouTubeVideos =
             videos;
 
 
         // ----------------------------------------------------
-        // VIDEO 1 → VELKÉ OKNO
+        // HLAVNÍ VIDEO
         // ----------------------------------------------------
 
         if (videos.length > 0) {
@@ -320,13 +490,17 @@ async function loadChaosTrendYouTube() {
 
 
         // ----------------------------------------------------
-        // VIDEO 2–10 → MALÁ OKNA
+        // MALÁ VIDEA
         // ----------------------------------------------------
 
         displayHistoryVideos(
             videos
         );
 
+
+        // ----------------------------------------------------
+        // ÚSPĚŠNÉ NAČTENÍ
+        // ----------------------------------------------------
 
         console.log(
             "CHAOS TREND: YouTube API funguje."
@@ -350,4 +524,3 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
-```
