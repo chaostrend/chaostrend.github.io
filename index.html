@@ -1,1219 +1,225 @@
-
 <!DOCTYPE html>
-
 <html lang="cs">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>CHAOS TREND – Josef Čáp</title>
-
-    <!-- =========================
-         SEO – VYHLEDÁVAČE
-         ========================= -->
+    <title>CHAOS TREND – Údržba</title>
 
     <meta name="description"
-          content="CHAOS TREND – osobní web Josefa Čápa. Autorská hudba, filmy, knihy, články, vesmír, tajemství a další tvorba.">
+          content="CHAOS TREND – web je momentálně v údržbě.">
 
-    <meta name="author"
-          content="Josef Čáp">
-
-    <meta name="robots"
-          content="index, follow">
-
-    <!-- =========================
-         SOCIÁLNÍ SÍTĚ – OPEN GRAPH
-         ========================= -->
-
-    <meta property="og:title"
-          content="CHAOS TREND – Josef Čáp">
-
-    <meta property="og:description"
-          content="Hudba, film, knihy, články, vesmír a další tvorba Josefa Čápa.">
-
-    <meta property="og:type"
-          content="website">
-
-    <meta property="og:locale"
-          content="cs_CZ">
-
-    <!-- =========================
-         STRUKTUROVANÁ DATA
-         ========================= -->
-
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "CHAOS TREND",
-        "description": "Osobní web Josefa Čápa zaměřený na hudbu, film, knihy, články, vesmír a tajemství.",
-        "inLanguage": "cs-CZ",
-        "publisher": {
-            "@type": "Person",
-            "name": "Josef Čáp",
-            "jobTitle": "Autor, publicista a spisovatel"
-        }
-    }
-    </script>
-
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Josef Čáp",
-        "jobTitle": "Autor, publicista a spisovatel",
-        "description": "Josef Čáp je autor, publicista a spisovatel. Ve své tvorbě propojuje hudbu, film, knihy, články, vesmír, tajemství a vlastní pohled na svět.",
-        "sameAs": [
-            "https://www.youtube.com/@josefcap153",
-            "https://www.facebook.com/profile.php?id=61587742045481",
-            "https://www.instagram.com/chaos_trend/",
-            "https://medium.seznam.cz/autor/josef-cap-6901"
-        ]
-    }
-    </script>
-
-    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="ZNAK-CHAOS-TREND.png">
 
-<style>
-    /* =========================
-       KONTAKT – VYSKAKOVACÍ OKNO
-       ========================= */
+    <style>
 
-    .contact-modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.72);
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        padding: 20px;
-    }
-
-    .contact-modal.active {
-        display: flex;
-    }
-
-    .contact-box {
-        position: relative;
-        width: 100%;
-        max-width: 500px;
-        padding: 45px 35px;
-        background: #ffffff;
-        color: #111111;
-        border-radius: 35px;
-        text-align: center;
-        box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
-        animation: contactAppear 0.25s ease-out;
-    }
-
-    .contact-box .label {
-        margin-bottom: 10px;
-    }
-
-    .contact-box h2 {
-        margin-top: 5px;
-        margin-bottom: 25px;
-    }
-
-    .contact-email {
-        display: inline-block;
-        padding: 15px 25px;
-        border-radius: 999px;
-        background: #111111;
-        color: #ffffff;
-        text-decoration: none;
-        font-size: 1.15rem;
-        font-weight: bold;
-        transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-
-    .contact-email:hover {
-        transform: scale(1.04);
-        opacity: 0.85;
-    }
-
-    .contact-close {
-        position: absolute;
-        top: 15px;
-        right: 18px;
-        width: 42px;
-        height: 42px;
-        border: none;
-        border-radius: 50%;
-        background: #eeeeee;
-        color: #111111;
-        font-size: 24px;
-        cursor: pointer;
-        line-height: 42px;
-    }
-
-    .contact-close:hover {
-        background: #dddddd;
-    }
-
-    @keyframes contactAppear {
-        from {
-            opacity: 0;
-            transform: scale(0.9);
-        }
-
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-
-
-    /* =========================
-       DOPORUČENÉ VIDEO
-       ========================= */
-
-    .featured-video {
-        width: 100%;
-        max-width: 900px;
-        margin: 35px auto 0;
-    }
-
-    .featured-video-frame {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        overflow: hidden;
-        border-radius: 22px;
-        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
-        background: #000000;
-    }
-
-    .featured-video-frame iframe {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
-
-    .subscribe-box {
-        max-width: 700px;
-        margin: 35px auto 0;
-        padding: 30px 25px;
-        text-align: center;
-        border-radius: 25px;
-        background: rgba(255, 255, 255, 0.08);
-    }
-
-    .subscribe-box h3 {
-        margin-top: 0;
-        margin-bottom: 12px;
-    }
-
-    .subscribe-box p {
-        margin-bottom: 22px;
-    }
-
-
-    /* =========================
-       SOCIÁLNÍ SÍTĚ
-       ========================= */
-
-    .social-links {
-        max-width: 800px;
-        margin: 50px auto 0;
-        padding: 30px 25px;
-        text-align: center;
-        border-radius: 25px;
-        background: rgba(255, 255, 255, 0.08);
-    }
-
-    .social-links h3 {
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-
-    .social-links p {
-        margin-bottom: 22px;
-    }
-
-    .social-buttons {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-
-    .social-button {
-        display: inline-block;
-        padding: 13px 22px;
-        border-radius: 30px;
-        color: #ffffff;
-        text-decoration: none;
-        font-weight: bold;
-        transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-
-    .social-button:hover {
-        transform: translateY(-2px);
-        opacity: 0.85;
-    }
-
-    .social-button.youtube {
-        background: #ff0000;
-    }
-
-    .social-button.facebook {
-        background: #1877f2;
-    }
-
-    .social-button.instagram {
-        background: #e4405f;
-    }
-
-
-    /* =========================
-       MOBIL
-       ========================= */
-
-    @media (max-width: 600px) {
-
-        .contact-box {
-            padding: 40px 20px;
-            border-radius: 28px;
-        }
-
-        .contact-email {
-            font-size: 1rem;
-            padding: 14px 18px;
-        }
-
-        .featured-video-frame {
-            border-radius: 15px;
-        }
-
-        .subscribe-box {
-            padding: 25px 18px;
-        }
-
-        .social-links {
-            padding: 25px 18px;
-            border-radius: 22px;
-        }
-
-        .social-button {
-            width: 100%;
+        * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-    }
-</style>
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(
+                    circle at center,
+                    #151936 0%,
+                    #090b18 45%,
+                    #050712 100%
+                );
+            color: #f4f4f4;
+            text-align: center;
+            padding-bottom: 50px;
+        }
+
+        /* =========================
+           HORNÍ OBRÁZEK
+           ========================= */
+
+        .banner {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .banner img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* =========================
+           HLAVNÍ OBSAH
+           ========================= */
+
+        .maintenance {
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 55px 30px;
+        }
+
+        .logo {
+            width: 180px;
+            max-width: 60%;
+            height: auto;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 25px rgba(120, 100, 255, 0.35));
+        }
+
+        .small-title {
+            color: #aaa7ff;
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 6vw, 4rem);
+            letter-spacing: 4px;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            font-size: clamp(1.3rem, 3vw, 1.9rem);
+            font-weight: normal;
+            margin-bottom: 25px;
+        }
+
+        p {
+            color: #d8d8e5;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .projects {
+            margin: 30px 0;
+            padding: 22px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(160, 150, 255, 0.15);
+        }
+
+        .projects p {
+            color: #f4f4f4;
+        }
+
+        .thanks {
+            margin-top: 30px;
+            color: #aaa7ff;
+            font-weight: bold;
+        }
+
+        .author {
+            margin-top: 35px;
+            font-size: 0.95rem;
+            color: #888899;
+        }
+
+        /* =========================
+           MOBIL
+           ========================= */
+
+        @media (max-width: 600px) {
+
+            .maintenance {
+                padding: 40px 20px;
+            }
+
+            .small-title {
+                letter-spacing: 2px;
+                font-size: 0.8rem;
+            }
+
+            h1 {
+                letter-spacing: 2px;
+            }
+
+            .projects {
+                padding: 18px 15px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
 <body>
 
-<header class="hero" id="domu">
+    <!-- =========================
+         HORNÍ OBRÁZEK CHAOS TREND
+         ========================= -->
 
-    <img src="banner.jpg" alt="CHAOS TREND">
+    <div class="banner">
 
-    <div class="hero-content">
+        <img
+            src="banner.jpg"
+            alt="CHAOS TREND"
+        >
+
+    </div>
+
+
+    <!-- =========================
+         ÚDRŽBA
+         ========================= -->
+
+    <main class="maintenance">
+
+        <img
+            src="ZNAK-CHAOS-TREND.png"
+            alt="Znak CHAOS TREND"
+            class="logo"
+        >
 
         <p class="small-title">
             HUDBA • FILM • KNIHA • VESMÍR
         </p>
 
-        <h1>CHAOS TREND</h1>
-
-        <p class="subtitle">
-            Hudební a filmový svět Josefa Čápa
-        </p>
-
-        <a href="https://www.youtube.com/@josefcap153"
-           target="_blank"
-           class="youtube-button">
-            ▶ NAVŠTÍVIT MŮJ YOUTUBE
-        </a>
-
-    </div>
-
-</header>
-
-
-<nav class="navigation">
-
-    <a href="#domu">Domů</a>
-    <a href="#hudba">Hudba</a>
-    <a href="#videa">Filmy / Videa</a>
-    <a href="#kniha">Kniha</a>
-    <a href="#clanky">Články</a>
-    <a href="#autor">O autorovi</a>
-
-    <a href="#" onclick="openContact(event)">
-        Kontakt
-    </a>
-
-</nav>
-
-
-<!-- =========================
-     HUDBA
-     ========================= -->
-
-<section id="hudba" class="section">
-
-    <p class="label">MOJE HUDBA</p>
-
-    <h2>Hudební svět CHAOS TREND</h2>
-
-    <p>
-        Autorská hudba Josefa Čápa – písně inspirované vesmírem,
-        Atlantidou, životem, fantazií i obyčejnými lidskými příběhy.
-    </p>
-
-
-    <div class="cards">
-
-
-        <div class="card">
-
-            <div class="card-image">🎵</div>
-
-            <h3>
-                Carmina ex Galaxia Nostra
-            </h3>
-
-            <p>
-                Písně z naší galaxie.
-            </p>
-
-            <a href="https://www.youtube.com/watch?v=TP4FN5TrwKs&list=PLylajYvodZnthjAwFiVQU846hpuDjSrBA"
-               target="_blank"
-               class="card-button">
-                ▶ POSLECHNOUT NA YOUTUBE
-            </a>
-
-            <a href="https://www.supraphonline.cz/album/938638-carmina-ex-galaxia-nostra-pisne-z-nasi-galaxie"
-               target="_blank"
-               class="card-button">
-                💿 KOUPIT NA SUPRAPHONLINE
-            </a>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="card-image">🌌</div>
-
-            <h3>
-                Atlantské kroniky
-            </h3>
-
-            <p>
-                Hudební svět inspirovaný Atlantidou
-                a příběhy z románu.
-            </p>
-
-            <a href="https://www.youtube.com/watch?v=7d0zLmmPnJo&list=PLTkzUybDxg0Q"
-               target="_blank"
-               class="card-button">
-                ▶ POSLECHNOUT NA YOUTUBE
-            </a>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="card-image">🎶</div>
-
-            <h3>
-                Písně s poselstvím
-            </h3>
-
-            <p>
-                Písně s duchovním a životním poselstvím.
-            </p>
-
-            <a href="https://www.youtube.com/playlist?list=PLEwkFt8mG0z4"
-               target="_blank"
-               class="card-button">
-                ▶ POSLECHNOUT NA YOUTUBE
-            </a>
-
-        </div>
-
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     VIDEA
-     ========================= -->
-
-<section id="videa" class="section dark-section">
-
-    <p class="label">
-        FILMY • VIDEA
-    </p>
-
-    <h2>
-        Filmový svět CHAOS TREND
-    </h2>
-
-    <p>
-        Videa, krátké filmy, hudební klipy a další audiovizuální
-        tvorba Josefa Čápa.
-    </p>
-
-
-    <div class="featured-video">
-
-
-        <div class="featured-video-frame">
-
-            <iframe
-                id="youtube-featured-video"
-                src=""
-                title="Doporučené video CHAOS TREND"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen>
-            </iframe>
-
-        </div>
-
-
-        <div class="subscribe-box">
-
-            <h3>
-                🔴 Nezapomeňte na odběr nových videí!
-            </h3>
-
-            <p>
-                Líbí se vám moje tvorba?
-                Přihlaste se k odběru kanálu CHAOS TREND
-                a nenechte si ujít nová videa.
-            </p>
-
-            <a href="https://www.youtube.com/@josefcap153?sub_confirmation=1"
-               target="_blank"
-               class="youtube-button">
-                🔴 ODBĚR NA YOUTUBE
-            </a>
-
-        </div>
-
-
-    </div>
-
-
-    <div style="text-align:center; margin-top:35px;">
-
-        <a href="https://www.youtube.com/@josefcap153"
-           target="_blank"
-           class="youtube-button">
-            ▶ VŠECHNA VIDEA NA YOUTUBE
-        </a>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     KNIHY
-     ========================= -->
-
-<section id="kniha" class="section">
-
-    <p class="label">
-        KNIHY
-    </p>
-
-    <h2>
-        Knihy Josefa Čápa
-    </h2>
-
-    <p>
-        Knihy, ve kterých se setkává realita, tajemství,
-        vesmír a hranice našeho poznání.
-    </p>
-
-
-    <div class="cards">
-
-
-        <div class="card">
-
-            <img src="./kniha1.jpg"
-                 alt="Das Ende der kosmischen Zeit"
-                 class="book-cover">
-
-            <h3>
-                Das Ende der kosmischen Zeit
-            </h3>
-
-            <p>
-                <strong>
-                    Finis Temporis Universi –
-                    Inspiriert von einem wahren Traum
-                </strong>
-            </p>
-
-            <a href="https://www.amazon.de/dp/B0FQCB7GN3"
-               target="_blank"
-               class="card-button">
-                📖 KNIHA NA AMAZON.DE
-            </a>
-
-        </div>
-
-
-        <div class="card">
-
-            <img src="./kniha2.jpg"
-                 alt="UFO Within Reach"
-                 class="book-cover">
-
-            <h3>
-                UFO Within Reach
-            </h3>
-
-            <p>
-                <strong>
-                    My Story and the Places Where I Saw Them:
-                    True experiences that will take you beyond
-                    the boundaries of the known
-                </strong>
-            </p>
-
-            <a href="https://www.amazon.com/UFO-Within-Reach-experiences-boundaries/dp/B0FGTT95NW"
-               target="_blank"
-               class="card-button">
-                📖 KNIHA NA AMAZON.COM
-            </a>
-
-        </div>
-
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     ČLÁNKY
-     ========================= -->
-
-<section id="clanky" class="section">
-
-    <p class="label">
-        ČLÁNKY
-    </p>
-
-    <h2>
-        Moje články
-    </h2>
-
-    <p>
-        Píšu o světě kolem nás, politice, společnosti, přírodě,
-        technologiích i tématech, která často vyvolávají otázky.
-    </p>
-
-
-    <div class="latest-article">
-
-        <img src="./hraz.png"
-             alt="Sucha a vedra ukazují, že se klima mění"
-             class="article-image">
-
-        <p class="article-date">
-            22. srpna 2026
-        </p>
-
-        <h3>
-            Sucha a vedra ukazují, že se klima mění.
-            Škůdce stromů může být spojencem proti nedostatku vody
-        </h3>
-
-        <p>
-            Boj o vodu započal. Sucho a vedra mění naši krajinu
-            a některé přírodní procesy mohou překvapivě pomoci
-            v boji proti nedostatku vody.
-        </p>
-
-        <a href="https://medium.seznam.cz/clanek/josef-cap-boj-o-vodu-zapocal-skudce-stromu-muze-byt-prekvapivym-spojencem-proti-suchu-311854"
-           target="_blank"
-           class="card-button">
-            📰 ČÍST CELÝ ČLÁNEK
-        </a>
-
-    </div>
-
-
-    <p class="label">
-        VÝBĚR Z MÝCH ČLÁNKŮ
-    </p>
-
-    <h2>
-        Nejzajímavější články
-    </h2>
-
-
-    <div class="cards">
-
-
-        <!-- 1 -->
-        <div class="card">
-
-            <img src="./prezident.png"
-                 alt="Neústupnost Babiše a Turka"
-                 class="article-image">
-
-            <h3>
-                Neústupnost Babiše a Turka –
-                to nevyhnutelně vede k předčasným volbám
-            </h3>
-
-            <p>
-                Prezident nemá jinou možnost?
-            </p>
-
-            <a href="https://medium.seznam.cz/clanek/josef-cap-neustupnost-babise-a-turka-to-nevyhnutelne-vede-k-predcasnym-volbam-prezident-nema-jinou-moznost-211035"
-               target="_blank"
-               class="card-button">
-                📰 ČÍST ČLÁNEK
-            </a>
-
-        </div>
-
-
-        <!-- 2 -->
-        <div class="card">
-
-            <img src="./armada.png"
-                 alt="Základní vojenská služba"
-                 class="article-image">
-
-            <h3>
-                Budou maminky plakat?
-                Bez vojáků armáda neobstojí!
-            </h3>
-
-            <p>
-                Základní vojenská služba je opět nutností.
-            </p>
-
-            <a href="https://medium.seznam.cz/clanek/josef-cap-budou-maminky-plakat-bez-vojaku-armada-neobstoji-zakladni-vojenska-sluzba-je-opet-nutnosti-143104"
-               target="_blank"
-               class="card-button">
-                📰 ČÍST ČLÁNEK
-            </a>
-
-        </div>
-
-
-        <!-- 3 -->
-        <div class="card">
-
-            <img src="./partie.png"
-                 alt="Andrej Babiš rozehrál šachovou partii"
-                 class="article-image">
-
-            <h3>
-                Andrej Babiš rozehrál šachovou partii,
-                jakou tahle země ještě nezažila
-            </h3>
-
-            <p>
-                Politická partie, která může změnit českou politiku.
-            </p>
-
-            <a href="https://medium.seznam.cz/clanek/josef-cap-andrej-babis-rozehral-sachovou-partii-jakou-tahle-země-ještě-nezazila-215910"
-               target="_blank"
-               class="card-button">
-                📰 ČÍST ČLÁNEK
-            </a>
-
-        </div>
-
-
-        <!-- 4 -->
-        <div class="card">
-
-            <img src="./kapr.jpeg"
-                 alt="Vánoční kapři"
-                 class="article-image">
-
-            <h3>
-                Vánoční kapry už vám neprodáme
-            </h3>
-
-            <p>
-                Hypermarkety rozhodly „demokraticky“ za nás.
-            </p>
-
-            <a href="https://medium.seznam.cz/clanek/josef-cap-vanocni-kapry-uz-vam-neprodame-hypermarkety-rozhodly-demokraticky-za-nas-102496"
-               target="_blank"
-               class="card-button">
-                📰 ČÍST ČLÁNEK
-            </a>
-
-        </div>
-
-
-        <!-- 5 -->
-        <div class="card">
-
-            <img src="./kontrast.png"
-                 alt="Česko má problém – není voda ke koupání"
-                 class="article-image">
-
-            <h3>
-                Česko má problém –
-                není voda ke koupání
-            </h3>
-
-            <p>
-                A politici nechtějí přiznat pravdu.
-            </p>
-
-            <a href="https://medium.seznam.cz/clanek/josef-cap-cesko-ma-problem-neni-voda-ke-koupeni-a-politici-nechteji-priznat-pravdu-295679"
-               target="_blank"
-               class="card-button">
-                📰 ČÍST ČLÁNEK
-            </a>
-
-        </div>
-
-
-        <!-- 6 -->
-        <div class="card">
-
-            <img src="./elektromobilita.jpeg"
-                 alt="Elektromobilita a spalovací motory"
-                 class="article-image">
-
-            <h3>
-                Evropa chce své spalovací motory
-            </h3>
-
-            <p>
-                Vinou toho má Čína náskok,
-                že svým konkurentům frnkla před očima.
-            </p>
-
-            <a href="https://medium.seznam.cz/clanek/josef-cap-evropa-chce-sve-spalovaci-motory-vinou-to-ma-cina-naskok-ze-svym-konkurentum-frnkla-pred-oci-73996"
-               target="_blank"
-               class="card-button">
-                📰 ČÍST ČLÁNEK
-            </a>
-
-        </div>
-
-
-    </div>
-
-
-    <div style="text-align:center; margin-top:50px;">
-
-        <a href="https://medium.seznam.cz/autor/josef-cap-6901"
-           target="_blank"
-           class="youtube-button">
-            📰 ZOBRAZIT VŠECHNY MÉ ČLÁNKY NA MÉDIUM.CZ
-        </a>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     O AUTOROVI
-     ========================= -->
-
-<section id="autor" class="section dark-section">
-
-    <p class="label">
-        O AUTOROVI
-    </p>
-
-    <h2>
-        Josef Čáp
-    </h2>
-
-    <p>
-        Jsem autor, publicista a spisovatel. Ve své tvorbě
-        propojuji hudbu, film, knihy, články, vesmír,
-        tajemství a vlastní pohled na svět.
-    </p>
-
-    <p style="margin-top:20px;">
-        CHAOS TREND je můj vlastní prostor, kde se všechny
-        tyto oblasti setkávají na jednom místě.
-    </p>
-
-</section>
-
-
-<!-- =========================
-     ZÁVĚREČNÁ VÝZVA
-     ========================= -->
-
-<section class="final-cta">
-
-    <h2>
-        Vstupte do světa CHAOS TREND
-    </h2>
-
-    <p>
-        Hudba • Film • Kniha • Články • Vesmír
-    </p>
-
-    <a href="https://www.youtube.com/@josefcap153"
-       target="_blank"
-       class="youtube-button"
-       style="margin-top:30px;">
-        ▶ NAVŠTÍVIT MŮJ YOUTUBE
-    </a>
-
-
-    <!-- =========================
-         SOCIÁLNÍ SÍTĚ
-         ========================= -->
-
-    <div class="social-links">
-
-        <h3>
-            SLEDUJTE CHAOS TREND
-        </h3>
-
-        <p>
-            Najdete mě také na sociálních sítích.
-        </p>
-
-        <div class="social-buttons">
-
-            <a href="https://www.youtube.com/@josefcap153"
-               target="_blank"
-               class="social-button youtube">
-                ▶ YouTube
-            </a>
-
-            <a href="https://www.facebook.com/profile.php?id=61587742045481"
-               target="_blank"
-               class="social-button facebook">
-                f Facebook
-            </a>
-
-            <a href="https://www.instagram.com/chaos_trend/"
-               target="_blank"
-               class="social-button instagram">
-                ◎ Instagram
-            </a>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<footer>
-
-    © 2026 Josef Čáp – CHAOS TREND
-
-</footer>
-
-
-<!-- =========================
-     KONTAKTNÍ OKNO
-     ========================= -->
-
-<div id="contact-modal"
-     class="contact-modal"
-     onclick="closeContact(event)">
-
-    <div class="contact-box"
-         onclick="event.stopPropagation()">
-
-        <button class="contact-close"
-                onclick="closeContact()"
-                aria-label="Zavřít">
-            ×
-        </button>
-
-        <p class="label">
-            KONTAKT
-        </p>
+        <h1>
+            CHAOS TREND
+        </h1>
 
         <h2>
-            Napište mi
+            Web je momentálně v údržbě
         </h2>
 
         <p>
-            Máte-li zájem mě kontaktovat,
-            můžete mi napsat na:
+            Na webu právě pracujeme a připravujeme pro vás
+            jeho novou a plně funkční podobu.
         </p>
 
-        <a href="mailto:menter@seznam.cz"
-           class="contact-email">
-            ✉ menter@seznam.cz
-        </a>
-
-    </div>
-
-</div>
-
-
-<script src="script.js"></script>
-
-<script>
-
-/* =========================
-   KONTAKT
-   ========================= */
-
-function openContact(event) {
-
-    event.preventDefault();
-
-    document.getElementById("contact-modal")
-        .classList.add("active");
-
-}
-
-
-function closeContact(event) {
-
-    if (event && event.target !== event.currentTarget) {
-        return;
-    }
-
-    document.getElementById("contact-modal")
-        .classList.remove("active");
-
-}
-
-
-document.addEventListener("keydown", function(event) {
-
-    if (event.key === "Escape") {
-
-        document.getElementById("contact-modal")
-            .classList.remove("active");
-
-    }
-
-});
-
-
-/* =========================
-   6 NÁHODNÝCH YOUTUBE VIDEÍ
-   ========================= */
-
-const featuredVideos = [
-
-    {
-        title: "Petrův zdar",
-        id: "nBXruArK0FI"
-    },
-
-    {
-        title: "Mami, já jsem s tebou",
-        id: "J4pehzNleRk"
-    },
-
-    {
-        title: "TAM TULA AKULA",
-        id: "PTmcWlgJYWc"
-    },
-
-    {
-        title: "Měj tuhle zemi rád",
-        id: "6eNKzrqpaZw"
-    },
-
-    {
-        title: "Píseň o chlebu a lásce",
-        id: "gQ2rsIoGNcE"
-    },
-
-    {
-        title: "Zuby, zuby, zuby v1",
-        id: "NKCJF9ShY30"
-    }
-
-];
-
-
-/* =========================
-   VÝBĚR VIDEA
-   ========================= */
-
-function showFeaturedVideo() {
-
-    const iframe =
-        document.getElementById("youtube-featured-video");
-
-    const lastVideo =
-        localStorage.getItem("chaosTrendLastVideo");
-
-
-    let availableVideos =
-        featuredVideos.filter(function(video) {
-
-            return video.id !== lastVideo;
-
-        });
-
-
-    const selectedVideo =
-        availableVideos[
-            Math.floor(
-                Math.random() * availableVideos.length
-            )
-        ];
-
-
-    /*
-       mute=1
-       autoplay=0
-       playsinline=1
-
-       Video se nejprve načte potichu.
-       Přehrávání spustíme až při
-       příchodu do zorného pole.
-    */
-
-    iframe.src =
-        "https://www.youtube.com/embed/" +
-        selectedVideo.id +
-        "?enablejsapi=1&autoplay=0&mute=1&playsinline=1";
-
-
-    iframe.title =
-        selectedVideo.title +
-        " – CHAOS TREND";
-
-
-    localStorage.setItem(
-        "chaosTrendLastVideo",
-        selectedVideo.id
-    );
-
-}
-
-
-/* =========================
-   AUTOMATICKÉ PŘEHRÁVÁNÍ
-   ========================= */
-
-function sendYouTubeCommand(command) {
-
-    const iframe =
-        document.getElementById("youtube-featured-video");
-
-
-    if (!iframe.contentWindow) {
-        return;
-    }
-
-
-    iframe.contentWindow.postMessage(
-
-        JSON.stringify({
-
-            event: "command",
-
-            func: command,
-
-            args: []
-
-        }),
-
-        "*"
-
-    );
-
-}
-
-
-/* =========================
-   SLEDOVÁNÍ VIDITELNOSTI VIDEA
-   ========================= */
-
-function setupVideoObserver() {
-
-    const videoFrame =
-        document.querySelector(".featured-video-frame");
-
-
-    if (!videoFrame) {
-        return;
-    }
-
-
-    const observer =
-        new IntersectionObserver(
-
-            function(entries) {
-
-                entries.forEach(function(entry) {
-
-                    if (entry.isIntersecting) {
-
-                        /*
-                           Video je alespoň z poloviny
-                           v zorném poli.
-                        */
-
-                        sendYouTubeCommand(
-                            "playVideo"
-                        );
-
-                    } else {
-
-                        /*
-                           Když návštěvník odscrolluje,
-                           video se pozastaví.
-                        */
-
-                        sendYouTubeCommand(
-                            "pauseVideo"
-                        );
-
-                    }
-
-                });
-
-            },
-
-            {
-                threshold: 0.5
-            }
-
-        );
-
-
-    observer.observe(videoFrame);
-
-}
-
-
-/* =========================
-   SPUŠTĚNÍ
-   ========================= */
-
-showFeaturedVideo();
-
-setupVideoObserver();
-
-</script>
+        <div class="projects">
+
+            <p>
+                🎵 Hudba &nbsp; • &nbsp;
+                🎬 Videa &nbsp; • &nbsp;
+                ✍️ Autorská tvorba &nbsp; • &nbsp;
+                🌌 Další projekty CHAOS TREND
+            </p>
+
+        </div>
+
+        <p class="thanks">
+            Děkujeme za vaši trpělivost.
+        </p>
+
+        <p class="author">
+            Brzy se na vás opět těšíme.<br><br>
+            Josef Čáp
+        </p>
+
+    </main>
 
 </body>
 
 </html>
-
