@@ -1,13 +1,14 @@
 * {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 
 html {
     scroll-behavior: smooth;
 }
+
 
 body {
     font-family: Arial, Helvetica, sans-serif;
@@ -23,50 +24,106 @@ body {
 
 .hero {
     min-height: 560px;
-
+    position: relative;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-
-    text-align: center;
-
-    background:
-        radial-gradient(circle at center,
-        #202b5c 0%,
-        #0c1230 35%,
-        #050712 75%);
+    justify-content: center;
+    overflow: hidden;
 }
+
+
+.hero-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            rgba(5, 7, 18, 0.35),
+            rgba(5, 7, 18, 0.82)
+        );
+    z-index: 1;
+}
+
 
 .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
     padding: 40px 20px;
 }
-.hero-image {
-    display: block;
-    width: min(100%, 1100px);
-    max-height: 300px;
-    object-fit: cover;
-    margin: 0 auto 30px;
-    border-radius: 18px;
-}
-.small-title,
-.label {
+
+
+.small-title {
+    font-size: 14px;
     letter-spacing: 4px;
-    font-size: 13px;
-    color: #9fa9ff;
-    font-weight: bold;
+    margin-bottom: 20px;
+    color: #d8d8d8;
 }
+
 
 .hero h1 {
-    font-size: clamp(55px, 10vw, 110px);
-    letter-spacing: 8px;
-    margin: 20px 0;
+    font-size: clamp(52px, 10vw, 110px);
+    line-height: 1;
+    letter-spacing: 5px;
+    margin-bottom: 20px;
 }
 
+
 .subtitle {
-    font-size: 22px;
-    color: #d9dcff;
-    margin-bottom: 35px;
+    font-size: 20px;
+    color: #ddd;
+    margin-bottom: 30px;
+}
+
+
+/* =========================
+   TLAČÍTKA
+   ========================= */
+
+.youtube-button {
+    display: inline-block;
+    padding: 13px 25px;
+    border-radius: 10px;
+    background: #ff0000;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s ease;
+}
+
+
+.youtube-button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+
+.card-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: #171c2c;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: 0.2s ease;
+}
+
+
+.card-button:hover {
+    transform: translateY(-2px);
+    background: #242b42;
 }
 
 
@@ -81,248 +138,484 @@ body {
 
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
     gap: 8px;
 
-    padding: 15px;
+    padding: 14px 20px;
 
-    background: rgba(4, 6, 18, 0.96);
-    border-bottom: 1px solid #272d50;
+    background: rgba(5, 7, 18, 0.92);
+    backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
+
 
 .navigation a {
-    color: white;
+    color: #fff;
     text-decoration: none;
-
-    padding: 8px 14px;
-
-    border-radius: 20px;
-
-    transition: 0.3s;
+    padding: 8px 13px;
+    border-radius: 7px;
+    font-size: 14px;
+    transition: 0.2s ease;
 }
 
+
 .navigation a:hover {
-    background: #303b76;
+    background: rgba(255,255,255,0.08);
 }
 
 
 /* =========================
-   SEKCE
+   OBECNÉ SEKCE
    ========================= */
 
 .section {
-    max-width: 1100px;
-    margin: auto;
-
-    padding: 90px 25px;
+    padding: 90px 6%;
+    max-width: 1300px;
+    margin: 0 auto;
 }
 
-.section h2 {
-    font-size: 38px;
-    margin: 10px 0 25px;
-}
-
-.section > p {
-    max-width: 800px;
-}
 
 .dark-section {
     max-width: none;
-
     background:
         linear-gradient(
-            135deg,
-            #080b1b,
-            #111735
+            180deg,
+            #080b18,
+            #050712
         );
 }
 
-.dark-section > * {
-    max-width: 1100px;
-    margin-left: auto;
-    margin-right: auto;
+
+.section h2,
+.final-cta h2 {
+    font-size: clamp(30px, 5vw, 48px);
+    margin-bottom: 35px;
 }
 
 
-/* =========================
-   TLAČÍTKA
-   ========================= */
-
-.youtube-button,
-.card-button {
-    display: inline-block;
-
-    padding: 13px 25px;
-
-    border-radius: 30px;
-
-    text-decoration: none;
-
+.label {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: #aaa;
+    margin-bottom: 10px;
     font-weight: bold;
-
-    transition: 0.3s;
-}
-
-.youtube-button {
-    background: #e62117;
-    color: white;
-}
-
-.youtube-button:hover {
-    transform: scale(1.05);
-}
-
-.card-button {
-    margin-top: 20px;
-
-    background: #252d5b;
-    color: white;
-}
-
-.card-button:hover {
-    background: #3b478c;
 }
 
 
 /* =========================
-   HUDBA / KARTY
+   JAK TO VIDÍ ČÁP?
    ========================= */
 
-.cards {
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fit, minmax(250px, 1fr));
-
-    gap: 25px;
-
-    margin-top: 40px;
-}
-
-.card {
-    background: #10152d;
-
-    border: 1px solid #292f53;
-
-    border-radius: 18px;
-
-    padding: 25px;
-
-    transition: 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-6px);
-    border-color: #5965b0;
-}
-
-.card h3 {
-    font-size: 22px;
-    margin: 15px 0 10px;
-}
-
-.card-image {
-    height: 180px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-radius: 12px;
+.chaos-opinion {
+    max-width: none;
 
     background:
         radial-gradient(
-            circle,
-            #34468e,
-            #10152d
+            circle at top,
+            rgba(70, 80, 150, 0.18),
+            transparent 45%
+        ),
+        linear-gradient(
+            180deg,
+            #090d1d,
+            #050712
         );
 
-    font-size: 65px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 
-/* =========================
-   VIDEO
-   ========================= */
+.chaos-opinion-heading {
+    max-width: 1050px;
+    margin: 0 auto 35px;
+    text-align: center;
+}
 
-.video-box {
-    max-width: 900px;
 
-    margin: 40px auto 0;
+.chaos-opinion-heading h2 {
+    margin-bottom: 5px;
+}
 
+
+.chaos-opinion-subtitle {
+    color: #aaa;
+    font-size: 18px;
+}
+
+
+.chaos-opinion-main {
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+
+.chaos-opinion-main-frame {
+    position: relative;
+    width: 100%;
     aspect-ratio: 16 / 9;
 
-    border-radius: 18px;
-
     overflow: hidden;
+
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.15);
+
+    background: #02030a;
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,0.5);
 }
 
-.video-placeholder {
+
+.chaos-opinion-main-frame iframe {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
     height: 100%;
+
+    border: 0;
+}
+
+
+.chaos-opinion-placeholder {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 10px;
+
+    text-align: center;
+
+    color: #ddd;
+}
+
+
+.placeholder-icon {
+    font-size: 55px;
+    margin-bottom: 5px;
+}
+
+
+.chaos-opinion-placeholder strong {
+    font-size: 24px;
+}
+
+
+.chaos-opinion-placeholder span {
+    color: #888;
+}
+
+
+.chaos-opinion-history-title {
+    max-width: 1050px;
+    margin: 45px auto 20px;
+
+    text-align: center;
+}
+
+
+.chaos-opinion-history-title span {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: #999;
+    font-weight: bold;
+}
+
+
+.chaos-opinion-history {
+    max-width: 1050px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 18px;
+}
+
+
+.chaos-opinion-item {
+    position: relative;
+
+    aspect-ratio: 16 / 10;
+
+    overflow: hidden;
+
+    border-radius: 15px;
+
+    background: #101426;
+
+    border: 1px solid rgba(255,255,255,0.1);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.25);
+}
+
+
+.chaos-opinion-item iframe {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+}
+
+
+.chaos-opinion-empty {
+    position: absolute;
+    inset: 0;
 
     display: flex;
     flex-direction: column;
 
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
     text-align: center;
 
-    padding: 30px;
-
-    background:
-        radial-gradient(
-            circle,
-            #26356d,
-            #090d20
-        );
-}
-
-.play-symbol {
-    font-size: 70px;
-    margin-bottom: 20px;
-}
-
-
-/* =========================
-   KNIHA
-   ========================= */
-
-.book-card {
-    display: grid;
-
-    grid-template-columns: 250px 1fr;
-
-    gap: 40px;
-
-    align-items: center;
-
-    margin-top: 40px;
-
-    padding: 30px;
-
-    background: #10152d;
-
-    border-radius: 20px;
-}
-
-.book-placeholder {
-    min-height: 320px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    font-size: 80px;
-
-    border-radius: 12px;
+    gap: 5px;
 
     background:
         linear-gradient(
             145deg,
-            #303d80,
-            #11162d
+            #11172b,
+            #0b0f1e
         );
+
+    color: #777;
+}
+
+
+.history-placeholder-icon {
+    font-size: 30px;
+}
+
+
+.chaos-opinion-empty span {
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+
+.chaos-opinion-date {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    padding: 7px 8px;
+
+    background:
+        linear-gradient(
+            transparent,
+            rgba(0,0,0,0.9)
+        );
+
+    color: #fff;
+
+    font-size: 11px;
+    font-weight: bold;
+
+    text-align: center;
+}
+
+
+/* =========================
+   KARTY
+   ========================= */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+}
+
+
+.card {
+    padding: 25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.055),
+            rgba(255,255,255,0.018)
+        );
+
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255,255,255,0.22);
+}
+
+
+.card h3 {
+    margin: 15px 0 8px;
+}
+
+
+.card p {
+    color: #aaa;
+}
+
+
+.card-image {
+    min-height: 100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 50px;
+
+    border-radius: 12px;
+
+    background: rgba(255,255,255,0.04);
+}
+
+
+.article-image {
+    width: 100%;
+    height: 220px;
+
+    object-fit: cover;
+
+    border-radius: 12px;
+
+    display: block;
+}
+
+
+/* =========================
+   VIDEA
+   ========================= */
+
+.featured-video {
+    max-width: 1050px;
+    margin: 0 auto 35px;
+}
+
+
+.featured-video-frame {
+    position: relative;
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #000;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,0.4);
+}
+
+
+.featured-video-frame iframe {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+}
+
+
+.subscribe-box {
+    max-width: 700px;
+    margin: 35px auto;
+
+    padding: 35px;
+
+    text-align: center;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.06),
+            rgba(255,255,255,0.02)
+        );
+
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+
+.subscribe-box h3 {
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+
+
+.subscribe-box p {
+    color: #aaa;
+}
+
+
+.center-button {
+    text-align: center;
+}
+
+
+/* =========================
+   KNIHY
+   ========================= */
+
+.book-card {
+    max-width: 1050px;
+
+    margin: 0 auto 30px;
+
+    display: grid;
+    grid-template-columns: 240px 1fr;
+
+    gap: 30px;
+    align-items: center;
+
+    padding: 30px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.05),
+            rgba(255,255,255,0.015)
+        );
+
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+
+.book-card img {
+    width: 100%;
+    max-height: 330px;
+
+    object-fit: cover;
+
+    border-radius: 12px;
+}
+
+
+.book-card p {
+    color: #aaa;
 }
 
 
@@ -330,94 +623,351 @@ body {
    ČLÁNKY
    ========================= */
 
-.article-list {
-    margin-top: 35px;
-}
+.latest-article {
+    max-width: 1050px;
 
-.article-card {
-    max-width: 700px;
+    margin: 0 auto 40px;
 
     padding: 30px;
 
-    background: #10152d;
+    border-radius: 20px;
 
-    border: 1px solid #292f53;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.05),
+            rgba(255,255,255,0.015)
+        );
 
-    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+
+.latest-article .article-image {
+    height: 360px;
+    margin-bottom: 20px;
+}
+
+
+.article-date {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+
+.latest-article h3 {
+    margin-bottom: 10px;
 }
 
 
 /* =========================
-   HODNOCENÍ
+   ZÁVĚREČNÁ VÝZVA
    ========================= */
 
-.feedback {
+.final-cta {
+    padding: 100px 6% 70px;
+
     text-align: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(65, 75, 150, 0.18),
+            transparent 55%
+        );
 }
 
-.feedback-buttons {
+
+.final-cta > p {
+    color: #aaa;
+    margin-bottom: 30px;
+}
+
+
+.social-links {
     display: flex;
 
     justify-content: center;
+    align-items: center;
+
     flex-wrap: wrap;
 
-    gap: 15px;
+    gap: 25px;
 
     margin-top: 30px;
 }
 
-.feedback-buttons button {
-    border: none;
 
-    padding: 14px 25px;
+.social-links a {
+    font-size: 18px;
+    font-weight: bold;
 
-    border-radius: 30px;
+    text-decoration: none;
 
-    background: #252d5b;
-
-    color: white;
-
-    font-size: 16px;
-
-    cursor: pointer;
-
-    transition: 0.3s;
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
 }
 
-.feedback-buttons button:hover {
-    transform: scale(1.05);
+
+.social-links a:hover {
+    transform: translateY(-3px);
+    opacity: 0.8;
 }
 
-#vote-result {
-    margin-top: 25px;
 
-    color: #aeb7ff;
+/* YOUTUBE */
+
+.social-youtube {
+    color: #ff0000 !important;
+}
+
+
+/* FACEBOOK */
+
+.social-facebook {
+    color: #1877f2 !important;
+}
+
+
+/* INSTAGRAM */
+
+.social-instagram {
+    background:
+        linear-gradient(
+            45deg,
+            #f9ce34,
+            #ee2a7b,
+            #6228d7
+        );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    background-clip: text;
+}
+
+
+/* =========================
+   PODPORA CHAOS TREND
+   ========================= */
+
+.support-box {
+    max-width: 850px;
+
+    margin: 60px auto 20px;
+
+    padding: 40px 30px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.06),
+            rgba(255,255,255,0.02)
+        );
+
+    border: 1px solid rgba(255,255,255,0.12);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,0.35);
+}
+
+
+.support-box h2 {
+    margin-bottom: 15px;
+}
+
+
+.support-box > p:not(.label) {
+    max-width: 650px;
+
+    margin: 0 auto 25px;
+
+    color: #d8d8d8;
+}
+
+
+.support-account {
+    max-width: 420px;
+
+    margin: 25px auto;
+
+    padding: 18px;
+
+    background: rgba(0,0,0,0.3);
+
+    border-radius: 14px;
+}
+
+
+.support-account span {
+    display: block;
+
+    font-size: 14px;
+
+    color: #aaa;
+
+    margin-bottom: 6px;
+}
+
+
+.support-account strong {
+    font-size: 22px;
+
+    letter-spacing: 1px;
+}
+
+
+.support-choice {
+    margin-top: 25px !important;
+    margin-bottom: 12px !important;
 
     font-weight: bold;
 }
 
 
-/* =========================
-   ZÁVĚR
-   ========================= */
+.support-amounts {
+    display: flex;
 
-.final-cta {
-    text-align: center;
+    justify-content: center;
 
-    padding: 100px 25px;
+    flex-wrap: wrap;
 
-    background:
-        radial-gradient(
-            circle at center,
-            #26356d,
-            #070a18
-        );
+    gap: 10px;
 }
 
-.final-cta h2 {
-    font-size: 40px;
 
-    margin-bottom: 15px;
+.support-amounts button {
+    padding: 12px 22px;
+
+    border: 1px solid rgba(255,255,255,0.2);
+
+    border-radius: 10px;
+
+    background: #151a2a;
+
+    color: #fff;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.support-amounts button:hover {
+    transform: translateY(-2px);
+
+    background: #222941;
+}
+
+
+.custom-support {
+    margin-top: 25px;
+}
+
+
+.custom-support label {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #ccc;
+}
+
+
+.custom-support-row {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+
+.custom-support input {
+    width: 180px;
+
+    padding: 12px 15px;
+
+    border: 1px solid rgba(255,255,255,0.2);
+
+    border-radius: 10px;
+
+    background: #0b0e19;
+
+    color: #fff;
+
+    font-size: 16px;
+}
+
+
+.custom-support input::placeholder {
+    color: #777;
+}
+
+
+.custom-support button {
+    padding: 12px 20px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #fff;
+
+    color: #050712;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.custom-support button:hover {
+    transform: translateY(-2px);
+}
+
+
+.support-qr {
+    margin-top: 30px;
+
+    min-height: 30px;
+}
+
+
+.support-qr img {
+    width: 220px;
+    height: 220px;
+
+    display: block;
+
+    margin: 15px auto;
+
+    background: #fff;
+
+    padding: 10px;
+
+    border-radius: 12px;
+}
+
+
+.support-qr p {
+    color: #aaa;
+
+    font-size: 14px;
 }
 
 
@@ -426,15 +976,110 @@ body {
    ========================= */
 
 footer {
+    padding: 25px;
+
     text-align: center;
 
-    padding: 35px 20px;
+    color: #777;
 
-    background: #03040b;
+    border-top: 1px solid rgba(255,255,255,0.08);
 
-    color: #858ba8;
+    font-size: 13px;
+}
 
-    font-size: 14px;
+
+/* =========================
+   KONTAKT
+   ========================= */
+
+.contact-overlay {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0,0,0,0.78);
+
+    backdrop-filter: blur(8px);
+}
+
+
+.contact-box {
+    width: 100%;
+    max-width: 500px;
+
+    padding: 35px;
+
+    text-align: center;
+
+    background: #0c1020;
+
+    border: 1px solid rgba(255,255,255,0.15);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.6);
+}
+
+
+.contact-box h2 {
+    margin-bottom: 15px;
+}
+
+
+.contact-box p {
+    color: #ccc;
+}
+
+
+.contact-box a {
+    color: #fff;
+}
+
+
+.contact-close {
+    margin-top: 25px;
+
+    padding: 10px 20px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: #050712;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 950px) {
+
+    .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+
+    .chaos-opinion-history {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
 }
 
 
@@ -445,71 +1090,110 @@ footer {
 @media (max-width: 700px) {
 
     .hero {
-        min-height: 480px;
+        min-height: 500px;
     }
+
 
     .hero h1 {
-        letter-spacing: 4px;
+        letter-spacing: 2px;
     }
 
-    .subtitle {
-        font-size: 18px;
-    }
 
     .navigation {
-        position: relative;
+        gap: 3px;
+
+        padding: 10px;
     }
+
+
+    .navigation a {
+        font-size: 12px;
+
+        padding: 7px 9px;
+    }
+
 
     .section {
         padding: 65px 20px;
     }
 
-    .section h2 {
-        font-size: 30px;
-    }
 
-    .book-card {
+    .cards {
         grid-template-columns: 1fr;
     }
 
-    .book-placeholder {
-        min-height: 250px;
+
+    .chaos-opinion-history {
+        grid-template-columns: 1fr;
     }
 
-}
-.main-image-placeholder {
-    width: min(100%, 1100px);
-    height: 300px;
-    background: white;
-    margin: 0 auto 30px;
-    border-radius: 18px;
-}
 
-.article-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    display: block;
-    border-radius: 12px;
-    margin-bottom: 20px;
-}
+    .book-card {
+        grid-template-columns: 1fr;
 
-.latest-article {
-    max-width: 900px;
-    margin: 40px auto 70px;
-    padding: 30px;
-    background: #10152d;
-    border: 1px solid #292f53;
-    border-radius: 20px;
-}
+        text-align: center;
+    }
 
-.latest-article .article-image {
-    height: 350px;
-    margin-bottom: 25px;
-}
 
-.article-date {
-    color: #9fa9ff;
-    font-size: 14px;
-    margin-bottom: 10px;
+    .book-card img {
+        max-width: 240px;
+
+        margin: 0 auto;
+    }
+
+
+    .latest-article {
+        padding: 20px;
+    }
+
+
+    .latest-article .article-image {
+        height: 230px;
+    }
+
+
+    .article-image {
+        height: 200px;
+    }
+
+
+    .support-box {
+        padding: 30px 18px;
+    }
+
+
+    .support-account strong {
+        font-size: 18px;
+    }
+
+
+    .support-amounts {
+        gap: 8px;
+    }
+
+
+    .support-amounts button {
+        padding: 10px 16px;
+    }
+
+
+    .custom-support-row {
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+
+    .custom-support input,
+    .custom-support button {
+        width: 100%;
+
+        max-width: 280px;
+    }
+
+
+    .social-links {
+        gap: 18px;
+    }
+
 }
