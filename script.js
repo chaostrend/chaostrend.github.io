@@ -80,7 +80,7 @@ async function getLatestYouTubeVideos(
         "?part=snippet,contentDetails" +
         "&playlistId=" +
         encodeURIComponent(uploadsPlaylistId) +
-        "&maxResults=10" +
+        "&maxResults=11" +
         "&key=" +
         encodeURIComponent(YOUTUBE_API_KEY);
 
