@@ -1,3 +1,4 @@
+```javascript
 // ===========================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // JAK TO VIDÍ ČÁP?
@@ -8,7 +9,7 @@
 // API KLÍČ
 // ============================================================
 
-const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
+const YOUTUBE_API_KEY = "SEM_PONECH_SVŮJ_STÁVAJÍCÍ_API_KLÍČ";
 
 
 // ============================================================
@@ -16,6 +17,41 @@ const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
 // ============================================================
 
 const YOUTUBE_PLAYLIST_ID = "PLYU2NhaIDiV8";
+
+
+// ============================================================
+// ZNĚLKA CHAOS TREND
+// ============================================================
+
+const chaosTrendJingle =
+    new Audio("znelka.m4a");
+
+chaosTrendJingle.preload =
+    "auto";
+
+
+// ============================================================
+// SPUŠTĚNÍ ZNĚLKY
+// ============================================================
+
+function playChaosTrendJingle() {
+
+    chaosTrendJingle.pause();
+
+    chaosTrendJingle.currentTime =
+        0;
+
+    chaosTrendJingle.play()
+        .catch(function(error) {
+
+            console.log(
+                "CHAOS TREND: znělku se nepodařilo automaticky spustit.",
+                error
+            );
+
+        });
+
+}
 
 
 // ============================================================
@@ -312,6 +348,10 @@ function displayHistoryVideos(videos) {
             "click",
             function() {
 
+                // Nejprve spustíme znělku
+                playChaosTrendJingle();
+
+                // Potom zobrazíme vybrané video
                 displayMainVideo(video);
 
             }
@@ -524,3 +564,4 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
+```
