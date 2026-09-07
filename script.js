@@ -1,7 +1,7 @@
 // ===========================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // JAK TO VIDÍ ČÁP?
-// ============================================================
+// ===========================================================
 
 
 // ============================================================
@@ -34,7 +34,8 @@ async function getChaosOpinionPlaylistVideos() {
         encodeURIComponent(YOUTUBE_API_KEY);
 
 
-    const response = await fetch(url);
+    const response =
+        await fetch(url);
 
 
     if (!response.ok) {
@@ -274,25 +275,54 @@ function displayHistoryVideos(videos) {
         item.className =
             "chaos-opinion-item";
 
-item.style.cursor = "pointer";
 
-const clickOverlay =
-    document.createElement("div");
+        item.style.cursor =
+            "pointer";
 
-clickOverlay.style.position = "absolute";
-clickOverlay.style.inset = "0";
-clickOverlay.style.cursor = "pointer";
-clickOverlay.style.zIndex = "10";
 
-item.style.position = "relative";
+        item.style.position =
+            "relative";
 
-clickOverlay.addEventListener("click", function() {
-    displayMainVideo(video);
-});
 
-item.appendChild(clickOverlay);
+        // ----------------------------------------------------
+        // KLIKACÍ VRSTVA
+        // ----------------------------------------------------
 
-});
+        const clickOverlay =
+            document.createElement("div");
+
+
+        clickOverlay.style.position =
+            "absolute";
+
+
+        clickOverlay.style.inset =
+            "0";
+
+
+        clickOverlay.style.cursor =
+            "pointer";
+
+
+        clickOverlay.style.zIndex =
+            "10";
+
+
+        clickOverlay.addEventListener(
+            "click",
+            function() {
+
+                displayMainVideo(video);
+
+            }
+        );
+
+
+        item.appendChild(
+            clickOverlay
+        );
+
+
         // ----------------------------------------------------
         // YOUTUBE IFRAME
         // ----------------------------------------------------
@@ -430,10 +460,6 @@ async function loadChaosTrendYouTube() {
         );
 
 
-        // ----------------------------------------------------
-        // NAČTENÍ PLAYLISTU
-        // ----------------------------------------------------
-
         const items =
             await getChaosOpinionPlaylistVideos();
 
@@ -444,17 +470,9 @@ async function loadChaosTrendYouTube() {
         );
 
 
-        // ----------------------------------------------------
-        // PŘÍPRAVA DAT
-        // ----------------------------------------------------
-
         let videos =
             prepareYouTubeVideos(items);
 
-
-        // ----------------------------------------------------
-        // SEŘAZENÍ OD NEJNOVĚJŠÍHO
-        // ----------------------------------------------------
 
         videos =
             sortVideosByDate(videos);
@@ -466,17 +484,9 @@ async function loadChaosTrendYouTube() {
         );
 
 
-        // ----------------------------------------------------
-        // ULOŽENÍ DO WINDOW
-        // ----------------------------------------------------
-
         window.chaosTrendYouTubeVideos =
             videos;
 
-
-        // ----------------------------------------------------
-        // HLAVNÍ VIDEO
-        // ----------------------------------------------------
 
         if (videos.length > 0) {
 
@@ -487,18 +497,10 @@ async function loadChaosTrendYouTube() {
         }
 
 
-        // ----------------------------------------------------
-        // HISTORIE
-        // ----------------------------------------------------
-
         displayHistoryVideos(
             videos
         );
 
-
-        // ----------------------------------------------------
-        // ÚSPĚŠNÉ NAČTENÍ
-        // ----------------------------------------------------
 
         console.log(
             "CHAOS TREND: playlist „Jak to vidí Čáp?“ byl úspěšně načten."
@@ -522,4 +524,3 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
-
