@@ -1,4 +1,3 @@
-javascript
 // ===========================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // JAK TO VIDÍ ČÁP?
@@ -9,7 +8,7 @@ javascript
 // API KLÍČ
 // ============================================================
 
-const YOUTUBE_API_KEY = "SEM PONECH SVŮJ PŮVODNÍ API KLÍČ";
+const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
 
 
 // ============================================================
@@ -17,84 +16,6 @@ const YOUTUBE_API_KEY = "SEM PONECH SVŮJ PŮVODNÍ API KLÍČ";
 // ============================================================
 
 const YOUTUBE_PLAYLIST_ID = "PLYU2NhaIDiV8";
-
-
-// ============================================================
-// ZNĚLKA CHAOS TREND
-// ============================================================
-
-const chaosTrendJingle =
-    new Audio("znelka.m4a");
-
-chaosTrendJingle.preload =
-    "auto";
-
-
-// ============================================================
-// ZNĚLKA → POTOM VIDEO VE VELKÉM OKNĚ
-// ============================================================
-
-function playJingleThenVideo(video) {
-
-    if (!video) {
-        return;
-    }
-
-
-    console.log(
-        "CHAOS TREND: spouštím znělku:",
-        video.title
-    );
-
-
-    // Zastavení případné předchozí znělky
-    chaosTrendJingle.pause();
-
-
-    // Začátek znělky
-    chaosTrendJingle.currentTime =
-        0;
-
-
-    // Po skončení znělky použijeme
-    // původní funkci pro hlavní video.
-    chaosTrendJingle.onended =
-        function() {
-
-            displayMainVideo(
-                video
-            );
-
-        };
-
-
-    const playPromise =
-        chaosTrendJingle.play();
-
-
-    if (playPromise !== undefined) {
-
-        playPromise.catch(
-            function(error) {
-
-                console.error(
-                    "CHAOS TREND: znělku se nepodařilo spustit:",
-                    error
-                );
-
-
-                // Kdyby prohlížeč znělku zablokoval,
-                // video se přesto zobrazí.
-                displayMainVideo(
-                    video
-                );
-
-            }
-        );
-
-    }
-
-}
 
 
 // ============================================================
@@ -189,8 +110,7 @@ function prepareYouTubeVideos(items) {
                     item.snippet?.publishedAt ||
                     "",
 
-                thumbnail:
-                    thumbnail,
+                thumbnail: thumbnail,
 
                 url:
                     "https://www.youtube.com/watch?v=" +
@@ -287,6 +207,72 @@ function displayMainVideo(video) {
 
 
 // ============================================================
+// 4.5 ZNĚLKA PŘED PŘEPNUTÍM VIDEA
+// ============================================================
+
+const chaosTrendJingle =
+    new Audio("znelka.m4a");
+
+chaosTrendJingle.preload =
+    "auto";
+
+
+function playJingleThenVideo(video) {
+
+    if (!video) {
+
+        return;
+
+    }
+
+
+    console.log(
+        "CHAOS TREND: spouštím znělku:",
+        video.title
+    );
+
+
+    chaosTrendJingle.pause();
+
+
+    chaosTrendJingle.currentTime =
+        0;
+
+
+    chaosTrendJingle.onended =
+        function() {
+
+            displayMainVideo(video);
+
+        };
+
+
+    const playPromise =
+        chaosTrendJingle.play();
+
+
+    if (playPromise !== undefined) {
+
+        playPromise.catch(
+            function(error) {
+
+                console.error(
+                    "CHAOS TREND: znělku se nepodařilo spustit:",
+                    error
+                );
+
+
+                displayMainVideo(video);
+
+            }
+        );
+
+    }
+
+}
+
+
+// ============================================================
 // 5. ZOBRAZENÍ HISTORIE VIDEÍ
 // ============================================================
 
@@ -310,6 +296,28 @@ function displayHistoryVideos(videos) {
 
 
     container.innerHTML = "";
+
+
+    /*
+        VIDEO 0
+        = nejnovější video
+        = velké hlavní okno
+
+
+        VIDEO 1
+        = první historické okno
+
+
+        VIDEO 2
+        = druhé historické okno
+
+
+        VIDEO 3
+        = třetí historické okno
+
+
+        atd.
+    */
 
 
     for (
@@ -370,13 +378,7 @@ function displayHistoryVideos(videos) {
             "click",
             function() {
 
-                // 1. kliknutí
-                // 2. znělka
-                // 3. po znělce hlavní video
-
-                playJingleThenVideo(
-                    video
-                );
+                playJingleThenVideo(video);
 
             }
         );
@@ -588,4 +590,3 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
-
