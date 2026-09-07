@@ -1,4 +1,4 @@
-javascript
+```javascript
 // ===========================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // JAK TO VIDÍ ČÁP?
@@ -9,7 +9,7 @@ javascript
 // API KLÍČ
 // ============================================================
 
-const YOUTUBE_API_KEY = "SEM_PONECH_SVŮJ_STÁVAJÍCÍ_API_KLÍČ";
+const YOUTUBE_API_KEY = "TVŮJ_STÁVAJÍCÍ_API_KLÍČ";
 
 
 // ============================================================
@@ -31,25 +31,105 @@ chaosTrendJingle.preload =
 
 
 // ============================================================
-// SPUŠTĚNÍ ZNĚLKY
+// PŘÍPRAVA VIDEA PO SKONČENÍ ZNĚLKY
 // ============================================================
 
-function playChaosTrendJingle() {
+function playVideoAfterJingle(video) {
 
+    if (!video) {
+        return;
+    }
+
+    const iframe =
+        document.getElementById(
+            "chaos-opinion-main-video"
+        );
+
+    if (!iframe) {
+        return;
+    }
+
+    iframe.src =
+        "https://www.youtube.com/embed/" +
+        video.id +
+        "?autoplay=1&mute=1&playsinline=1&rel=0";
+
+    iframe.title =
+        video.title;
+
+    iframe.style.display =
+        "block";
+
+    console.log(
+        "CHAOS TREND: ZNĚLKA SKONČILA – SPUŠTĚNO VIDEO:",
+        video.title
+    );
+
+}
+
+
+// ============================================================
+// SPUŠTĚNÍ ZNĚLKY A NÁSLEDNÉHO VIDEA
+// ============================================================
+
+function playJingleThenVideo(video) {
+
+    if (!video) {
+        return;
+    }
+
+
+    console.log(
+        "CHAOS TREND: SPUŠTĚNA ZNĚLKA:",
+        video.title
+    );
+
+
+    // Zastavení případné předchozí znělky
     chaosTrendJingle.pause();
 
+
+    // Návrat na začátek znělky
     chaosTrendJingle.currentTime =
         0;
 
-    chaosTrendJingle.play()
-        .catch(function(error) {
 
-            console.log(
-                "CHAOS TREND: znělku se nepodařilo automaticky spustit.",
-                error
+    // Po skončení znělky spustíme video
+    chaosTrendJingle.onended =
+        function() {
+
+            playVideoAfterJingle(
+                video
             );
 
-        });
+        };
+
+
+    // Spuštění znělky
+    const playPromise =
+        chaosTrendJingle.play();
+
+
+    if (playPromise !== undefined) {
+
+        playPromise.catch(
+            function(error) {
+
+                console.error(
+                    "CHAOS TREND: znělku se nepodařilo spustit:",
+                    error
+                );
+
+                // Kdyby prohlížeč přehrávání zablokoval,
+                // video se přesto zobrazí.
+                playVideoAfterJingle(
+                    video
+                );
+
+            }
+        );
+
+    }
 
 }
 
@@ -348,11 +428,9 @@ function displayHistoryVideos(videos) {
             "click",
             function() {
 
-                // Nejprve spustíme znělku
-                playChaosTrendJingle();
-
-                // Potom zobrazíme vybrané video
-                displayMainVideo(video);
+                playJingleThenVideo(
+                    video
+                );
 
             }
         );
@@ -564,4 +642,4 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
-
+```
