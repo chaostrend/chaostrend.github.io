@@ -1,5 +1,7 @@
+```javascript
 // ============================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
+// JAK TO VIDÍ ČÁP?
 // ============================================================
 
 
@@ -11,76 +13,24 @@ const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
 
 
 // ============================================================
-// YOUTUBE KANÁL
+// PLAYLIST PRO „JAK TO VIDÍ ČÁP?“
 // ============================================================
 
-const YOUTUBE_HANDLE = "@josefcap153";
-
-
-// ============================================================
-// 1. ZÍSKÁNÍ UPLOADS PLAYLISTU
-// ============================================================
-
-async function getYouTubeUploadsPlaylist() {
-
-    const url =
-        "https://www.googleapis.com/youtube/v3/channels" +
-        "?part=contentDetails" +
-        "&forHandle=" +
-        encodeURIComponent(YOUTUBE_HANDLE) +
-        "&key=" +
-        encodeURIComponent(YOUTUBE_API_KEY);
-
-    const response = await fetch(url);
-
-    if (!response.ok) {
-
-        const errorText = await response.text();
-
-        throw new Error(
-            "YouTube kanál se nepodařilo načíst. " +
-            response.status +
-            " " +
-            errorText
-        );
-
-    }
-
-    const data = await response.json();
-
-    if (
-        !data.items ||
-        data.items.length === 0
-    ) {
-
-        throw new Error(
-            "YouTube kanál nebyl nalezen."
-        );
-
-    }
-
-    return data.items[0]
-        .contentDetails
-        .relatedPlaylists
-        .uploads;
-
-}
+const YOUTUBE_PLAYLIST_ID = "PLYU2NhaIDiV8";
 
 
 // ============================================================
-// 2. NAČTENÍ VIDEÍ
+// 1. NAČTENÍ VIDEÍ Z KONKRÉTNÍHO PLAYLISTU
 // ============================================================
 
-async function getLatestYouTubeVideos(
-    uploadsPlaylistId
-) {
+async function getChaosOpinionPlaylistVideos() {
 
     const url =
         "https://www.googleapis.com/youtube/v3/playlistItems" +
         "?part=snippet,contentDetails" +
         "&playlistId=" +
-        encodeURIComponent(uploadsPlaylistId) +
-        "&maxResults=11" +
+        encodeURIComponent(YOUTUBE_PLAYLIST_ID) +
+        "&maxResults=50" +
         "&key=" +
         encodeURIComponent(YOUTUBE_API_KEY);
 
@@ -94,7 +44,7 @@ async function getLatestYouTubeVideos(
             await response.text();
 
         throw new Error(
-            "Videa z YouTube se nepodařilo načíst. " +
+            "Playlist YouTube se nepodařilo načíst. " +
             response.status +
             " " +
             errorText
@@ -113,7 +63,7 @@ async function getLatestYouTubeVideos(
 
 
 // ============================================================
-// 3. PŘÍPRAVA VIDEÍ
+// 2. PŘÍPRAVA VIDEÍ
 // ============================================================
 
 function prepareYouTubeVideos(items) {
@@ -180,6 +130,22 @@ function prepareYouTubeVideos(items) {
 
 
 // ============================================================
+// 3. SEŘAZENÍ PODLE DATA
+// ============================================================
+
+function sortVideosByDate(videos) {
+
+    return videos.sort(function(a, b) {
+
+        return new Date(b.date) -
+               new Date(a.date);
+
+    });
+
+}
+
+
+// ============================================================
 // 4. ZOBRAZENÍ HLAVNÍHO VIDEA
 // ============================================================
 
@@ -231,16 +197,17 @@ function displayMainVideo(video) {
 
 
     console.log(
-        "CHAOS TREND: hlavní video:",
+        "CHAOS TREND: HLAVNÍ VIDEO:",
         video.title,
-        video.id
+        video.id,
+        video.date
     );
 
 }
 
 
 // ============================================================
-// 5. ZOBRAZENÍ MALÝCH VIDEÍ
+// 5. ZOBRAZENÍ HISTORIE VIDEÍ
 // ============================================================
 
 function displayHistoryVideos(videos) {
@@ -254,7 +221,7 @@ function displayHistoryVideos(videos) {
     if (!container) {
 
         console.error(
-            "CHAOS TREND: kontejner malých videí nebyl nalezen."
+            "CHAOS TREND: kontejner historie nebyl nalezen."
         );
 
         return;
@@ -272,15 +239,15 @@ function displayHistoryVideos(videos) {
 
 
         VIDEO 1
-        = první malé okno
+        = první historické okno
 
 
         VIDEO 2
-        = druhé malé okno
+        = druhé historické okno
 
 
         VIDEO 3
-        = třetí malé okno
+        = třetí historické okno
 
 
         atd.
@@ -298,7 +265,7 @@ function displayHistoryVideos(videos) {
 
 
         // ----------------------------------------------------
-        // KARTA MALÉHO VIDEA
+        // KARTA VIDEA
         // ----------------------------------------------------
 
         const item =
@@ -345,6 +312,27 @@ function displayHistoryVideos(videos) {
 
 
         // ----------------------------------------------------
+        // NÁZEV VIDEA
+        // ----------------------------------------------------
+
+        const title =
+            document.createElement("div");
+
+
+        title.className =
+            "chaos-opinion-title";
+
+
+        title.textContent =
+            video.title;
+
+
+        item.appendChild(
+            title
+        );
+
+
+        // ----------------------------------------------------
         // DATUM
         // ----------------------------------------------------
 
@@ -375,9 +363,10 @@ function displayHistoryVideos(videos) {
 
 
         console.log(
-            "CHAOS TREND: malé video:",
+            "CHAOS TREND: HISTORICKÉ VIDEO:",
             video.title,
-            video.id
+            video.id,
+            video.date
         );
 
     }
@@ -420,36 +409,20 @@ async function loadChaosTrendYouTube() {
     try {
 
         console.log(
-            "CHAOS TREND: načítám YouTube videa..."
+            "CHAOS TREND: načítám playlist „Jak to vidí Čáp?“..."
         );
 
 
         // ----------------------------------------------------
-        // ZÍSKÁNÍ UPLOADS PLAYLISTU
-        // ----------------------------------------------------
-
-        const uploadsPlaylist =
-            await getYouTubeUploadsPlaylist();
-
-
-        console.log(
-            "CHAOS TREND: uploads playlist:",
-            uploadsPlaylist
-        );
-
-
-        // ----------------------------------------------------
-        // NAČTENÍ VIDEÍ
+        // NAČTENÍ PLAYLISTU
         // ----------------------------------------------------
 
         const items =
-            await getLatestYouTubeVideos(
-                uploadsPlaylist
-            );
+            await getChaosOpinionPlaylistVideos();
 
 
         console.log(
-            "CHAOS TREND: počet položek z YouTube:",
+            "CHAOS TREND: počet položek v playlistu:",
             items.length
         );
 
@@ -458,12 +431,20 @@ async function loadChaosTrendYouTube() {
         // PŘÍPRAVA DAT
         // ----------------------------------------------------
 
-        const videos =
+        let videos =
             prepareYouTubeVideos(items);
 
 
+        // ----------------------------------------------------
+        // SEŘAZENÍ OD NEJNOVĚJŠÍHO
+        // ----------------------------------------------------
+
+        videos =
+            sortVideosByDate(videos);
+
+
         console.log(
-            "CHAOS TREND: načtená videa:",
+            "CHAOS TREND: videa seřazená podle data:",
             videos
         );
 
@@ -490,7 +471,7 @@ async function loadChaosTrendYouTube() {
 
 
         // ----------------------------------------------------
-        // MALÁ VIDEA
+        // HISTORIE
         // ----------------------------------------------------
 
         displayHistoryVideos(
@@ -503,7 +484,7 @@ async function loadChaosTrendYouTube() {
         // ----------------------------------------------------
 
         console.log(
-            "CHAOS TREND: YouTube API funguje."
+            "CHAOS TREND: playlist „Jak to vidí Čáp?“ byl úspěšně načten."
         );
 
 
@@ -524,3 +505,4 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
+```
