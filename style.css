@@ -1208,3 +1208,102 @@ footer {
     }
 
 }
+/* ============================================================
+   CHAOS TREND – HODINY A DATUM
+   ============================================================ */
+
+#chaos-clock-widget {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: Arial, sans-serif;
+    user-select: none;
+}
+
+#chaos-analog-clock {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border: 4px solid currentColor;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
+
+.clock-number {
+    position: absolute;
+    font-size: 15px;
+    font-weight: bold;
+    transform: translate(-50%, -50%);
+}
+
+.n12 {
+    top: 14px;
+    left: 50%;
+}
+
+.n3 {
+    top: 50%;
+    left: calc(100% - 14px);
+}
+
+.n6 {
+    top: calc(100% - 14px);
+    left: 50%;
+}
+
+.n9 {
+    top: 50%;
+    left: 14px;
+}
+
+#clock-hour-hand,
+#clock-minute-hand,
+#clock-second-hand {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    transform-origin: 50% 100%;
+    border-radius: 5px;
+}
+
+#clock-hour-hand {
+    width: 5px;
+    height: 38px;
+    background: currentColor;
+}
+
+#clock-minute-hand {
+    width: 3px;
+    height: 55px;
+    background: currentColor;
+}
+
+#clock-second-hand {
+    width: 2px;
+    height: 62px;
+    background: currentColor;
+}
+
+#clock-center {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: currentColor;
+}
+
+#chaos-digital-clock {
+    font-size: 26px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+#chaos-date {
+    font-size: 17px;
+    font-weight: bold;
+}
