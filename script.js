@@ -669,3 +669,111 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
+/* ============================================================
+   CHAOS TREND – HODINY A DATUM
+   ============================================================ */
+
+function updateChaosClock() {
+
+    const now = new Date();
+
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    const hourAngle =
+        ((hours % 12) * 30) +
+        (minutes * 0.5);
+
+    const minuteAngle =
+        (minutes * 6) +
+        (seconds * 0.1);
+
+    const secondAngle =
+        seconds * 6;
+
+    const hourHand =
+        document.getElementById(
+            "clock-hour-hand"
+        );
+
+    const minuteHand =
+        document.getElementById(
+            "clock-minute-hand"
+        );
+
+    const secondHand =
+        document.getElementById(
+            "clock-second-hand"
+        );
+
+    if (hourHand) {
+        hourHand.style.transform =
+            "rotate(" +
+            hourAngle +
+            "deg)";
+    }
+
+    if (minuteHand) {
+        minuteHand.style.transform =
+            "rotate(" +
+            minuteAngle +
+            "deg)";
+    }
+
+    if (secondHand) {
+        secondHand.style.transform =
+            "rotate(" +
+            secondAngle +
+            "deg)";
+    }
+
+    const pad =
+        function(number) {
+            return String(number)
+                .padStart(2, "0");
+        };
+
+    const digitalClock =
+        document.getElementById(
+            "chaos-digital-clock"
+        );
+
+    if (digitalClock) {
+
+        digitalClock.textContent =
+            pad(hours) +
+            ":" +
+            pad(minutes) +
+            ":" +
+            pad(seconds);
+
+    }
+
+    const dateElement =
+        document.getElementById(
+            "chaos-date"
+        );
+
+    if (dateElement) {
+
+        dateElement.textContent =
+            now.toLocaleDateString(
+                "cs-CZ",
+                {
+                    day: "numeric",
+                    month: "numeric",
+                    year: "numeric"
+                }
+            );
+
+    }
+
+}
+
+updateChaosClock();
+
+setInterval(
+    updateChaosClock,
+    1000
+);
