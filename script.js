@@ -350,6 +350,28 @@ function displayHistoryVideos(videos) {
             "relative";
 
 
+        // ZAMEZENÍ TEXTOVÉMU KURZORU
+        item.style.userSelect =
+            "none";
+
+        item.style.webkitUserSelect =
+            "none";
+
+        item.style.mozUserSelect =
+            "none";
+
+        item.style.msUserSelect =
+            "none";
+
+        item.style.caretColor =
+            "transparent";
+
+        item.setAttribute(
+            "unselectable",
+            "on"
+        );
+
+
         // ----------------------------------------------------
         // KLIKACÍ VRSTVA
         // ----------------------------------------------------
@@ -374,9 +396,41 @@ function displayHistoryVideos(videos) {
             "10";
 
 
+        // ZAMEZENÍ TEXTOVÉMU KURZORU
+        clickOverlay.style.userSelect =
+            "none";
+
+        clickOverlay.style.webkitUserSelect =
+            "none";
+
+        clickOverlay.style.mozUserSelect =
+            "none";
+
+        clickOverlay.style.msUserSelect =
+            "none";
+
+        clickOverlay.style.caretColor =
+            "transparent";
+
+        clickOverlay.tabIndex =
+            -1;
+
+
+        clickOverlay.addEventListener(
+            "mousedown",
+            function(event) {
+
+                event.preventDefault();
+
+            }
+        );
+
+
         clickOverlay.addEventListener(
             "click",
-            function() {
+            function(event) {
+
+                event.preventDefault();
 
                 playJingleThenVideo(video);
 
@@ -419,6 +473,11 @@ function displayHistoryVideos(videos) {
             true;
 
 
+        // ZAMEZENÍ KLÁVESNÍMU FOKUSU
+        iframe.tabIndex =
+            -1;
+
+
         item.appendChild(
             iframe
         );
@@ -440,6 +499,16 @@ function displayHistoryVideos(videos) {
             video.title;
 
 
+        title.style.userSelect =
+            "none";
+
+        title.style.webkitUserSelect =
+            "none";
+
+        title.style.caretColor =
+            "transparent";
+
+
         item.appendChild(
             title
         );
@@ -459,6 +528,16 @@ function displayHistoryVideos(videos) {
 
         date.textContent =
             formatDate(video.date);
+
+
+        date.style.userSelect =
+            "none";
+
+        date.style.webkitUserSelect =
+            "none";
+
+        date.style.caretColor =
+            "transparent";
 
 
         item.appendChild(
