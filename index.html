@@ -182,7 +182,7 @@
     </div>
 
 
-    <!-- HLAVNÍ DNEŠNÍ VIDEO -->
+    <!-- HLAVNÍ VIDEO -->
 
     <div class="chaos-opinion-main">
 
@@ -220,7 +220,7 @@
     </div>
 
 
-    <!-- HISTORIE VIDEÍ -->
+    <!-- PŘEDCHOZÍ TÉMATA -->
 
     <div class="chaos-opinion-history-title">
 
@@ -988,17 +988,25 @@ function showFeaturedVideo() {
         return;
     }
 
+
     let lastVideo =
         localStorage.getItem("chaosTrendLastVideo");
 
+
     let available =
         featuredVideos.filter(function(video) {
+
             return video.id !== lastVideo;
+
         });
 
+
     if (available.length === 0) {
+
         available = featuredVideos;
+
     }
+
 
     const selected =
         available[
@@ -1007,10 +1015,12 @@ function showFeaturedVideo() {
             )
         ];
 
+
     iframe.src =
         "https://www.youtube.com/embed/" +
         selected.id +
         "?autoplay=0&mute=1&playsinline=1&rel=0&enablejsapi=1";
+
 
     localStorage.setItem(
         "chaosTrendLastVideo",
@@ -1028,6 +1038,7 @@ function sendYouTubeCommand(command) {
     if (!iframe || !iframe.contentWindow) {
         return;
     }
+
 
     iframe.contentWindow.postMessage(
         JSON.stringify({
@@ -1049,6 +1060,7 @@ function setupVideoObserver() {
     if (!frame) {
         return;
     }
+
 
     const observer =
         new IntersectionObserver(
@@ -1074,6 +1086,7 @@ function setupVideoObserver() {
             }
         );
 
+
     observer.observe(frame);
 
 }
@@ -1097,6 +1110,7 @@ function setSupportAmount(amount) {
         return;
     }
 
+
     input.value = amount;
 
     createSupportQR();
@@ -1111,6 +1125,7 @@ function createSupportQR() {
 
     const qrBox =
         document.getElementById("support-qr");
+
 
     if (!input || !qrBox) {
         return;
