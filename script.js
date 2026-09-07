@@ -1,13 +1,15 @@
+javascript
 // ===========================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // JAK TO VIDÍ ČÁP?
 // ===========================================================
 
+
 // ============================================================
 // API KLÍČ
 // ============================================================
 
-const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
+const YOUTUBE_API_KEY = "SEM PONECH SVŮJ PŮVODNÍ API KLÍČ";
 
 
 // ============================================================
@@ -29,45 +31,7 @@ chaosTrendJingle.preload =
 
 
 // ============================================================
-// PŘÍPRAVA VIDEA PO SKONČENÍ ZNĚLKY
-// ============================================================
-
-function playVideoAfterJingle(video) {
-
-    if (!video) {
-        return;
-    }
-
-    const iframe =
-        document.getElementById(
-            "chaos-opinion-main-video"
-        );
-
-    if (!iframe) {
-        return;
-    }
-
-    iframe.src =
-        "https://www.youtube.com/embed/" +
-        video.id +
-        "?autoplay=1&mute=1&playsinline=1&rel=0";
-
-    iframe.title =
-        video.title;
-
-    iframe.style.display =
-        "block";
-
-    console.log(
-        "CHAOS TREND: ZNĚLKA SKONČILA – SPUŠTĚNO VIDEO:",
-        video.title
-    );
-
-}
-
-
-// ============================================================
-// SPUŠTĚNÍ ZNĚLKY A NÁSLEDNÉHO VIDEA
+// ZNĚLKA → POTOM VIDEO VE VELKÉM OKNĚ
 // ============================================================
 
 function playJingleThenVideo(video) {
@@ -78,7 +42,7 @@ function playJingleThenVideo(video) {
 
 
     console.log(
-        "CHAOS TREND: SPUŠTĚNA ZNĚLKA:",
+        "CHAOS TREND: spouštím znělku:",
         video.title
     );
 
@@ -87,23 +51,23 @@ function playJingleThenVideo(video) {
     chaosTrendJingle.pause();
 
 
-    // Návrat na začátek znělky
+    // Začátek znělky
     chaosTrendJingle.currentTime =
         0;
 
 
-    // Po skončení znělky spustíme video
+    // Po skončení znělky použijeme
+    // původní funkci pro hlavní video.
     chaosTrendJingle.onended =
         function() {
 
-            playVideoAfterJingle(
+            displayMainVideo(
                 video
             );
 
         };
 
 
-    // Spuštění znělky
     const playPromise =
         chaosTrendJingle.play();
 
@@ -118,9 +82,10 @@ function playJingleThenVideo(video) {
                     error
                 );
 
-                // Kdyby prohlížeč přehrávání zablokoval,
+
+                // Kdyby prohlížeč znělku zablokoval,
                 // video se přesto zobrazí.
-                playVideoAfterJingle(
+                displayMainVideo(
                     video
                 );
 
@@ -224,7 +189,8 @@ function prepareYouTubeVideos(items) {
                     item.snippet?.publishedAt ||
                     "",
 
-                thumbnail: thumbnail,
+                thumbnail:
+                    thumbnail,
 
                 url:
                     "https://www.youtube.com/watch?v=" +
@@ -346,28 +312,6 @@ function displayHistoryVideos(videos) {
     container.innerHTML = "";
 
 
-    /*
-        VIDEO 0
-        = nejnovější video
-        = velké hlavní okno
-
-
-        VIDEO 1
-        = první historické okno
-
-
-        VIDEO 2
-        = druhé historické okno
-
-
-        VIDEO 3
-        = třetí historické okno
-
-
-        atd.
-    */
-
-
     for (
         let i = 1;
         i < videos.length;
@@ -425,6 +369,10 @@ function displayHistoryVideos(videos) {
         clickOverlay.addEventListener(
             "click",
             function() {
+
+                // 1. kliknutí
+                // 2. znělka
+                // 3. po znělce hlavní video
 
                 playJingleThenVideo(
                     video
