@@ -1,211 +1,4 @@
 // ============================================================
-// CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
-// JAK TO VIDÍ ČÁP?
-// ============================================================
-
-
-// ============================================================
-// API KLÍČ
-// ============================================================
-
-const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
-
-
-// ============================================================
-// PLAYLIST PRO „JAK TO VIDÍ ČÁP?“
-// ============================================================
-
-const YOUTUBE_PLAYLIST_ID = "PLYU2NhaIDiV8";
-
-
-// ============================================================
-// 1. NAČTENÍ VIDEÍ Z KONKRÉTNÍHO PLAYLISTU
-// ============================================================
-
-async function getChaosOpinionPlaylistVideos() {
-
-    const url =
-        "https://www.googleapis.com/youtube/v3/playlistItems" +
-        "?part=snippet,contentDetails" +
-        "&playlistId=" +
-        encodeURIComponent(YOUTUBE_PLAYLIST_ID) +
-        "&maxResults=50" +
-        "&key=" +
-        encodeURIComponent(YOUTUBE_API_KEY);
-
-
-    const response = await fetch(url);
-
-
-    if (!response.ok) {
-
-        const errorText =
-            await response.text();
-
-        throw new Error(
-            "Playlist YouTube se nepodařilo načíst. " +
-            response.status +
-            " " +
-            errorText
-        );
-
-    }
-
-
-    const data =
-        await response.json();
-
-
-    return data.items || [];
-
-}
-
-
-// ============================================================
-// 2. PŘÍPRAVA VIDEÍ
-// ============================================================
-
-function prepareYouTubeVideos(items) {
-
-    return items
-
-        .map(function(item) {
-
-            const videoId =
-                item.contentDetails?.videoId ||
-                item.snippet?.resourceId?.videoId;
-
-
-            if (!videoId) {
-
-                return null;
-
-            }
-
-
-            const thumbnails =
-                item.snippet?.thumbnails || {};
-
-
-            const thumbnail =
-                thumbnails.maxres?.url ||
-                thumbnails.standard?.url ||
-                thumbnails.high?.url ||
-                thumbnails.medium?.url ||
-                thumbnails.default?.url ||
-                "";
-
-
-            return {
-
-                id: videoId,
-
-                title:
-                    item.snippet?.title ||
-                    "Video CHAOS TREND",
-
-                date:
-                    item.contentDetails?.videoPublishedAt ||
-                    item.snippet?.publishedAt ||
-                    "",
-
-                thumbnail: thumbnail,
-
-                url:
-                    "https://www.youtube.com/watch?v=" +
-                    videoId
-
-            };
-
-        })
-
-        .filter(function(video) {
-
-            return video !== null;
-
-        });
-
-}
-
-
-// ============================================================
-// 3. SEŘAZENÍ PODLE DATA
-// ============================================================
-
-function sortVideosByDate(videos) {
-
-    return videos.sort(function(a, b) {
-
-        return new Date(b.date) -
-               new Date(a.date);
-
-    });
-
-}
-
-
-// ============================================================
-// 4. ZOBRAZENÍ HLAVNÍHO VIDEA
-// ============================================================
-
-function displayMainVideo(video) {
-
-    const iframe =
-        document.getElementById(
-            "chaos-opinion-main-video"
-        );
-
-
-    const placeholder =
-        document.getElementById(
-            "chaos-opinion-placeholder"
-        );
-
-
-    if (!iframe || !video) {
-
-        console.error(
-            "CHAOS TREND: hlavní video nebo jeho kontejner nebyl nalezen."
-        );
-
-        return;
-
-    }
-
-
-    iframe.src =
-        "https://www.youtube.com/embed/" +
-        video.id +
-        "?autoplay=0&mute=1&playsinline=1&rel=0";
-
-
-    iframe.title =
-        video.title;
-
-
-    iframe.style.display =
-        "block";
-
-
-    if (placeholder) {
-
-        placeholder.style.display =
-            "none";
-
-    }
-
-
-    console.log(
-        "CHAOS TREND: HLAVNÍ VIDEO:",
-        video.title,
-        video.id,
-        video.date
-    );
-
-}
-
-
-// ============================================================
 // 5. ZOBRAZENÍ HISTORIE VIDEÍ
 // ============================================================
 
@@ -236,20 +29,8 @@ function displayHistoryVideos(videos) {
         = nejnovější video
         = velké hlavní okno
 
-
-        VIDEO 1
-        = první historické okno
-
-
-        VIDEO 2
-        = druhé historické okno
-
-
-        VIDEO 3
-        = třetí historické okno
-
-
-        atd.
+        VIDEO 1+
+        = historická malá okna
     */
 
 
@@ -276,37 +57,78 @@ function displayHistoryVideos(videos) {
 
 
         // ----------------------------------------------------
-        // YOUTUBE IFRAME
+        // NÁHLED VIDEA
         // ----------------------------------------------------
 
-        const iframe =
-            document.createElement("iframe");
+        const preview =
+            document.createElement("div");
 
 
-        iframe.src =
-            "https://www.youtube.com/embed/" +
-            video.id +
-            "?autoplay=0&mute=1&playsinline=1&rel=0";
+        preview.className =
+            "chaos-opinion-preview";
 
 
-        iframe.title =
+        // Obrázek z YouTube
+        const image =
+            document.createElement("img");
+
+
+        image.src =
+            video.thumbnail;
+
+
+        image.alt =
             video.title;
 
 
-        iframe.loading =
+        image.loading =
             "lazy";
 
 
-        iframe.allow =
-            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        // ----------------------------------------------------
+        // TLAČÍTKO PLAY
+        // ----------------------------------------------------
+
+        const play =
+            document.createElement("div");
 
 
-        iframe.allowFullscreen =
-            true;
+        play.className =
+            "chaos-opinion-play";
+
+
+        play.innerHTML =
+            "▶";
+
+
+        preview.appendChild(
+            image
+        );
+
+
+        preview.appendChild(
+            play
+        );
+
+
+        // ----------------------------------------------------
+        // KLIKNUTÍ NA NÁHLED
+        // ----------------------------------------------------
+
+        preview.addEventListener(
+            "click",
+            function() {
+
+                openChaosOpinionVideo(
+                    video
+                );
+
+            }
+        );
 
 
         item.appendChild(
-            iframe
+            preview
         );
 
 
@@ -344,11 +166,46 @@ function displayHistoryVideos(videos) {
 
 
         date.textContent =
-            formatDate(video.date);
+            formatDate(
+                video.date
+            );
 
 
         item.appendChild(
             date
+        );
+
+
+        // ----------------------------------------------------
+        // ODKAZ NA YOUTUBE
+        // ----------------------------------------------------
+
+        const youtubeLink =
+            document.createElement("a");
+
+
+        youtubeLink.className =
+            "chaos-opinion-youtube";
+
+
+        youtubeLink.href =
+            video.url;
+
+
+        youtubeLink.target =
+            "_blank";
+
+
+        youtubeLink.rel =
+            "noopener noreferrer";
+
+
+        youtubeLink.textContent =
+            "YouTube ↗";
+
+
+        item.appendChild(
+            youtubeLink
         );
 
 
@@ -374,134 +231,203 @@ function displayHistoryVideos(videos) {
 
 
 // ============================================================
-// 6. FORMÁT DATA
+// 5A. OTEVŘENÍ VIDEA VE VELKÉM OKNĚ
 // ============================================================
 
-function formatDate(date) {
+function openChaosOpinionVideo(video) {
 
-    if (!date) {
+    let modal =
+        document.getElementById(
+            "chaos-opinion-modal"
+        );
 
-        return "";
 
-    }
+    // Pokud modal ještě neexistuje, vytvoříme ho
+    if (!modal) {
+
+        modal =
+            document.createElement("div");
 
 
-    return new Date(date)
-        .toLocaleDateString(
-            "cs-CZ",
-            {
-                day: "numeric",
-                month: "numeric",
-                year: "numeric"
+        modal.id =
+            "chaos-opinion-modal";
+
+
+        modal.className =
+            "chaos-opinion-modal";
+
+
+        modal.innerHTML = `
+
+            <div class="chaos-opinion-modal-box">
+
+                <button
+                    class="chaos-opinion-modal-close"
+                    type="button"
+                    aria-label="Zavřít video">
+                    ✕
+                </button>
+
+                <div class="chaos-opinion-modal-frame">
+
+                    <iframe
+                        id="chaos-opinion-modal-video"
+                        title="Video CHAOS TREND"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen>
+                    </iframe>
+
+                </div>
+
+                <div
+                    id="chaos-opinion-modal-title"
+                    class="chaos-opinion-modal-title">
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            modal
+        );
+
+
+        // ----------------------------------------------------
+        // ZAVŘENÍ TLAČÍTKEM
+        // ----------------------------------------------------
+
+        const closeButton =
+            modal.querySelector(
+                ".chaos-opinion-modal-close"
+            );
+
+
+        closeButton.addEventListener(
+            "click",
+            closeChaosOpinionVideo
+        );
+
+
+        // ----------------------------------------------------
+        // ZAVŘENÍ KLIKNUTÍM MIMO VIDEO
+        // ----------------------------------------------------
+
+        modal.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target === modal
+                ) {
+
+                    closeChaosOpinionVideo();
+
+                }
+
             }
         );
 
+    }
+
+
+    const iframe =
+        document.getElementById(
+            "chaos-opinion-modal-video"
+        );
+
+
+    const title =
+        document.getElementById(
+            "chaos-opinion-modal-title"
+        );
+
+
+    iframe.src =
+        "https://www.youtube.com/embed/" +
+        video.id +
+        "?autoplay=1&playsinline=1&rel=0";
+
+
+    iframe.title =
+        video.title;
+
+
+    title.textContent =
+        video.title;
+
+
+    modal.classList.add(
+        "is-open"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+
 }
 
 
 // ============================================================
-// 7. HLAVNÍ FUNKCE
+// 5B. ZAVŘENÍ VELKÉHO OKNA
 // ============================================================
 
-async function loadChaosTrendYouTube() {
+function closeChaosOpinionVideo() {
 
-    try {
-
-        console.log(
-            "CHAOS TREND: načítám playlist „Jak to vidí Čáp?“..."
+    const modal =
+        document.getElementById(
+            "chaos-opinion-modal"
         );
 
 
-        // ----------------------------------------------------
-        // NAČTENÍ PLAYLISTU
-        // ----------------------------------------------------
+    if (!modal) {
 
-        const items =
-            await getChaosOpinionPlaylistVideos();
-
-
-        console.log(
-            "CHAOS TREND: počet položek v playlistu:",
-            items.length
-        );
-
-
-        // ----------------------------------------------------
-        // PŘÍPRAVA DAT
-        // ----------------------------------------------------
-
-        let videos =
-            prepareYouTubeVideos(items);
-
-
-        // ----------------------------------------------------
-        // SEŘAZENÍ OD NEJNOVĚJŠÍHO
-        // ----------------------------------------------------
-
-        videos =
-            sortVideosByDate(videos);
-
-
-        console.log(
-            "CHAOS TREND: videa seřazená podle data:",
-            videos
-        );
-
-
-        // ----------------------------------------------------
-        // ULOŽENÍ DO WINDOW
-        // ----------------------------------------------------
-
-        window.chaosTrendYouTubeVideos =
-            videos;
-
-
-        // ----------------------------------------------------
-        // HLAVNÍ VIDEO
-        // ----------------------------------------------------
-
-        if (videos.length > 0) {
-
-            displayMainVideo(
-                videos[0]
-            );
-
-        }
-
-
-        // ----------------------------------------------------
-        // HISTORIE
-        // ----------------------------------------------------
-
-        displayHistoryVideos(
-            videos
-        );
-
-
-        // ----------------------------------------------------
-        // ÚSPĚŠNÉ NAČTENÍ
-        // ----------------------------------------------------
-
-        console.log(
-            "CHAOS TREND: playlist „Jak to vidí Čáp?“ byl úspěšně načten."
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "CHAOS TREND – chyba YouTube API:",
-            error
-        );
+        return;
 
     }
 
+
+    const iframe =
+        document.getElementById(
+            "chaos-opinion-modal-video"
+        );
+
+
+    if (iframe) {
+
+        iframe.src =
+            "";
+
+    }
+
+
+    modal.classList.remove(
+        "is-open"
+    );
+
+
+    document.body.style.overflow =
+        "";
+
 }
 
 
 // ============================================================
-// START
+// 5C. ZAVŘENÍ KLÁVESOU ESC
 // ============================================================
 
-loadChaosTrendYouTube();
+document.addEventListener(
+    "keydown",
+    function(event) {
 
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeChaosOpinionVideo();
+
+        }
+
+    }
+);
