@@ -1,3 +1,4 @@
+```javascript
 // ============================================================
 // 5. ZOBRAZENÍ HISTORIE VIDEÍ
 // ============================================================
@@ -9,7 +10,6 @@ function displayHistoryVideos(videos) {
             "chaos-opinion-history"
         );
 
-
     if (!container) {
 
         console.error(
@@ -17,12 +17,9 @@ function displayHistoryVideos(videos) {
         );
 
         return;
-
     }
 
-
     container.innerHTML = "";
-
 
     /*
         VIDEO 0
@@ -33,6 +30,14 @@ function displayHistoryVideos(videos) {
         = historická malá okna
     */
 
+    if (!Array.isArray(videos) || videos.length < 2) {
+
+        console.log(
+            "CHAOS TREND: Zatím není dost historických videí."
+        );
+
+        return;
+    }
 
     for (
         let i = 1;
@@ -40,9 +45,11 @@ function displayHistoryVideos(videos) {
         i++
     ) {
 
-        const video =
-            videos[i];
+        const video = videos[i];
 
+        if (!video || !video.id) {
+            continue;
+        }
 
         // ----------------------------------------------------
         // KARTA VIDEA
@@ -50,7 +57,6 @@ function displayHistoryVideos(videos) {
 
         const item =
             document.createElement("div");
-
 
         item.className =
             "chaos-opinion-item";
@@ -63,48 +69,68 @@ function displayHistoryVideos(videos) {
         const preview =
             document.createElement("div");
 
-
         preview.className =
             "chaos-opinion-preview";
 
+        preview.setAttribute(
+            "role",
+            "button"
+        );
 
-        // Obrázek z YouTube
+        preview.setAttribute(
+            "tabindex",
+            "0"
+        );
+
+        preview.setAttribute(
+            "aria-label",
+            "Přehrát video: " + video.title
+        );
+
+
+        // ----------------------------------------------------
+        // OBRÁZEK Z YOUTUBE
+        // ----------------------------------------------------
+
         const image =
             document.createElement("img");
 
-
         image.src =
-            video.thumbnail;
-
+            video.thumbnail ||
+            "https://i.ytimg.com/vi/" +
+            video.id +
+            "/hqdefault.jpg";
 
         image.alt =
-            video.title;
-
+            video.title ||
+            "Video CHAOS TREND";
 
         image.loading =
             "lazy";
 
 
         // ----------------------------------------------------
-        // TLAČÍTKO PLAY
+        // PLAY
         // ----------------------------------------------------
 
         const play =
             document.createElement("div");
 
-
         play.className =
             "chaos-opinion-play";
 
-
         play.innerHTML =
             "▶";
+
+        play.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
 
         preview.appendChild(
             image
         );
-
 
         preview.appendChild(
             play
@@ -112,16 +138,41 @@ function displayHistoryVideos(videos) {
 
 
         // ----------------------------------------------------
-        // KLIKNUTÍ NA NÁHLED
+        // OTEVŘENÍ VIDEA KLIKNUTÍM
         // ----------------------------------------------------
+
+        function openVideo() {
+
+            openChaosOpinionVideo(
+                video
+            );
+
+        }
 
         preview.addEventListener(
             "click",
-            function() {
+            openVideo
+        );
 
-                openChaosOpinionVideo(
-                    video
-                );
+
+        // ----------------------------------------------------
+        // OTEVŘENÍ KLÁVESOU ENTER / MEZERNÍK
+        // ----------------------------------------------------
+
+        preview.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Enter" ||
+                    event.key === " "
+                ) {
+
+                    event.preventDefault();
+
+                    openVideo();
+
+                }
 
             }
         );
@@ -139,14 +190,12 @@ function displayHistoryVideos(videos) {
         const title =
             document.createElement("div");
 
-
         title.className =
             "chaos-opinion-title";
 
-
         title.textContent =
-            video.title;
-
+            video.title ||
+            "Video CHAOS TREND";
 
         item.appendChild(
             title
@@ -160,16 +209,13 @@ function displayHistoryVideos(videos) {
         const date =
             document.createElement("div");
 
-
         date.className =
             "chaos-opinion-date";
-
 
         date.textContent =
             formatDate(
                 video.date
             );
-
 
         item.appendChild(
             date
@@ -183,26 +229,22 @@ function displayHistoryVideos(videos) {
         const youtubeLink =
             document.createElement("a");
 
-
         youtubeLink.className =
             "chaos-opinion-youtube";
 
-
         youtubeLink.href =
-            video.url;
-
+            video.url ||
+            "https://www.youtube.com/watch?v=" +
+            video.id;
 
         youtubeLink.target =
             "_blank";
 
-
         youtubeLink.rel =
             "noopener noreferrer";
 
-
         youtubeLink.textContent =
             "YouTube ↗";
-
 
         item.appendChild(
             youtubeLink
@@ -210,7 +252,7 @@ function displayHistoryVideos(videos) {
 
 
         // ----------------------------------------------------
-        // PŘIDÁNÍ DO HISTORIE
+        // PŘIDÁNÍ KARTY DO HISTORIE
         // ----------------------------------------------------
 
         container.appendChild(
@@ -224,17 +266,25 @@ function displayHistoryVideos(videos) {
             video.id,
             video.date
         );
-
     }
-
 }
 
 
 // ============================================================
-// 5A. OTEVŘENÍ VIDEA VE VELKÉM OKNĚ
+// 5A. OTEVŘENÍ HISTORICKÉHO VIDEA VE VELKÉM OKNĚ
 // ============================================================
 
 function openChaosOpinionVideo(video) {
+
+    if (!video || !video.id) {
+
+        console.error(
+            "CHAOS TREND: Nelze otevřít video – chybí ID."
+        );
+
+        return;
+    }
+
 
     let modal =
         document.getElementById(
@@ -242,20 +292,20 @@ function openChaosOpinionVideo(video) {
         );
 
 
-    // Pokud modal ještě neexistuje, vytvoříme ho
+    // --------------------------------------------------------
+    // VYTVOŘENÍ MODÁLNÍHO OKNA
+    // --------------------------------------------------------
+
     if (!modal) {
 
         modal =
             document.createElement("div");
 
-
         modal.id =
             "chaos-opinion-modal";
 
-
         modal.className =
             "chaos-opinion-modal";
-
 
         modal.innerHTML = `
 
@@ -284,6 +334,14 @@ function openChaosOpinionVideo(video) {
                     class="chaos-opinion-modal-title">
                 </div>
 
+                <a
+                    id="chaos-opinion-modal-youtube"
+                    class="chaos-opinion-modal-youtube"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    ▶ Otevřít video na YouTube
+                </a>
+
             </div>
 
         `;
@@ -303,11 +361,14 @@ function openChaosOpinionVideo(video) {
                 ".chaos-opinion-modal-close"
             );
 
+        if (closeButton) {
 
-        closeButton.addEventListener(
-            "click",
-            closeChaosOpinionVideo
-        );
+            closeButton.addEventListener(
+                "click",
+                closeChaosOpinionVideo
+            );
+
+        }
 
 
         // ----------------------------------------------------
@@ -332,40 +393,86 @@ function openChaosOpinionVideo(video) {
     }
 
 
+    // --------------------------------------------------------
+    // PRVKY MODÁLNÍHO OKNA
+    // --------------------------------------------------------
+
     const iframe =
         document.getElementById(
             "chaos-opinion-modal-video"
         );
-
 
     const title =
         document.getElementById(
             "chaos-opinion-modal-title"
         );
 
+    const youtubeLink =
+        document.getElementById(
+            "chaos-opinion-modal-youtube"
+        );
+
+
+    if (!iframe) {
+
+        console.error(
+            "CHAOS TREND: přehrávač modálního okna nebyl nalezen."
+        );
+
+        return;
+    }
+
+
+    // --------------------------------------------------------
+    // NAČTENÍ VIDEA
+    // --------------------------------------------------------
 
     iframe.src =
         "https://www.youtube.com/embed/" +
-        video.id +
+        encodeURIComponent(video.id) +
         "?autoplay=1&playsinline=1&rel=0";
 
-
     iframe.title =
-        video.title;
+        video.title ||
+        "Video CHAOS TREND";
 
 
-    title.textContent =
-        video.title;
+    if (title) {
 
+        title.textContent =
+            video.title ||
+            "Video CHAOS TREND";
+
+    }
+
+
+    if (youtubeLink) {
+
+        youtubeLink.href =
+            video.url ||
+            "https://www.youtube.com/watch?v=" +
+            video.id;
+
+    }
+
+
+    // --------------------------------------------------------
+    // OTEVŘENÍ
+    // --------------------------------------------------------
 
     modal.classList.add(
         "is-open"
     );
 
-
     document.body.style.overflow =
         "hidden";
 
+
+    console.log(
+        "CHAOS TREND: otevřeno historické video:",
+        video.title,
+        video.id
+    );
 }
 
 
@@ -380,11 +487,8 @@ function closeChaosOpinionVideo() {
             "chaos-opinion-modal"
         );
 
-
     if (!modal) {
-
         return;
-
     }
 
 
@@ -394,6 +498,7 @@ function closeChaosOpinionVideo() {
         );
 
 
+    // Zastavení videa odstraněním zdroje iframe
     if (iframe) {
 
         iframe.src =
@@ -410,6 +515,10 @@ function closeChaosOpinionVideo() {
     document.body.style.overflow =
         "";
 
+
+    console.log(
+        "CHAOS TREND: historické video zavřeno."
+    );
 }
 
 
@@ -431,3 +540,4 @@ document.addEventListener(
 
     }
 );
+```
