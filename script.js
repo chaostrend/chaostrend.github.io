@@ -8,7 +8,7 @@
 // API KLÍČ
 // ============================================================
 
-const YOUTUBE_API_KEY = "SEM PONECH SVŮJ PŮVODNÍ API KLÍČ";
+const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
 
 
 // ============================================================
