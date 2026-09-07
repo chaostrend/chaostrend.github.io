@@ -1,4 +1,4 @@
-```javascript
+javascript
 // ===========================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // JAK TO VIDÍ ČÁP?
@@ -564,4 +564,4 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
-```
+
