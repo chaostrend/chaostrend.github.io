@@ -1307,3 +1307,63 @@ footer {
     font-size: 17px;
     font-weight: bold;
 }
+/* ============================================================
+   CHAOS TREND – INFORMAČNÍ BUBLINKA U VIDEA
+   ============================================================ */
+
+.chaos-info-bubble {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    width: min(90%, 330px);
+
+    padding: 18px;
+
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.94);
+    color: white;
+
+    border: 2px solid currentColor;
+    border-radius: 14px;
+
+    text-align: center;
+
+    z-index: 30;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+
+.chaos-info-text {
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+
+.chaos-info-text strong {
+    font-size: 17px;
+}
+
+
+.chaos-info-button {
+    margin-top: 14px;
+
+    padding: 8px 22px;
+
+    border: none;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+.chaos-info-button:hover {
+    opacity: 0.85;
+}
