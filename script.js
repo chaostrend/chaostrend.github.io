@@ -276,9 +276,21 @@ function displayHistoryVideos(videos) {
 
 item.style.cursor = "pointer";
 
-item.addEventListener("click", function() {
+const clickOverlay =
+    document.createElement("div");
 
+clickOverlay.style.position = "absolute";
+clickOverlay.style.inset = "0";
+clickOverlay.style.cursor = "pointer";
+clickOverlay.style.zIndex = "10";
+
+item.style.position = "relative";
+
+clickOverlay.addEventListener("click", function() {
     displayMainVideo(video);
+});
+
+item.appendChild(clickOverlay);
 
 });
         // ----------------------------------------------------
