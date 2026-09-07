@@ -221,6 +221,7 @@ function displayMainVideo(video) {
 const chaosTrendJingle =
     new Audio("znelka.m4a");
 
+
 chaosTrendJingle.preload =
     "auto";
 
@@ -290,7 +291,7 @@ function showChaosInfoBubble(
 ) {
 
     // --------------------------------------------------------
-    // ZABRÁNÍ VYTVOŘENÍ DVOU BUBLIN
+    // ZABRÁNĚNÍ VYTVOŘENÍ DVOU BUBLIN
     // --------------------------------------------------------
 
     const oldBubble =
@@ -319,6 +320,18 @@ function showChaosInfoBubble(
 
 
     // --------------------------------------------------------
+    // DŮLEŽITÉ – BUBLINKA MUSÍ PŘIJÍMAT KLIKNUTÍ
+    // --------------------------------------------------------
+
+    bubble.style.zIndex =
+        "100";
+
+
+    bubble.style.pointerEvents =
+        "auto";
+
+
+    // --------------------------------------------------------
     // TEXT
     // --------------------------------------------------------
 
@@ -344,7 +357,7 @@ function showChaosInfoBubble(
 
 
     // --------------------------------------------------------
-    // TLAČÍTKO
+    // TLAČÍTKO „ROZUMÍM“
     // --------------------------------------------------------
 
     const button =
@@ -363,6 +376,26 @@ function showChaosInfoBubble(
         "chaos-info-button";
 
 
+    // --------------------------------------------------------
+    // DŮLEŽITÉ – TLAČÍTKO MUSÍ BÝT NAD OVERLAYEM
+    // --------------------------------------------------------
+
+    button.style.position =
+        "relative";
+
+
+    button.style.zIndex =
+        "101";
+
+
+    button.style.pointerEvents =
+        "auto";
+
+
+    // --------------------------------------------------------
+    // KLIKNUTÍ NA „ROZUMÍM“
+    // --------------------------------------------------------
+
     button.addEventListener(
         "click",
         function(event) {
@@ -372,9 +405,14 @@ function showChaosInfoBubble(
             event.stopPropagation();
 
 
-            // -----------------------------------------------
+            console.log(
+                "CHAOS TREND: uživatel potvrdil informační upozornění."
+            );
+
+
+            // ------------------------------------------------
             // ZAPAMATOVÁNÍ POTVRZENÍ
-            // -----------------------------------------------
+            // ------------------------------------------------
 
             try {
 
@@ -393,16 +431,16 @@ function showChaosInfoBubble(
             }
 
 
-            // -----------------------------------------------
+            // ------------------------------------------------
             // ODSTRANĚNÍ BUBLINY
-            // -----------------------------------------------
+            // ------------------------------------------------
 
             bubble.remove();
 
 
-            // -----------------------------------------------
+            // ------------------------------------------------
             // SPUŠTĚNÍ ZNĚLKY
-            // -----------------------------------------------
+            // ------------------------------------------------
 
             playJingleThenVideo(
                 video
@@ -577,7 +615,7 @@ function displayHistoryVideos(videos) {
 
 
         // ----------------------------------------------------
-        // KLIK – ZOBRAZENÍ BUBLINY NEBO PŘÍMÉ SPUŠTĚNÍ
+        // KLIKNUTÍ NA OVERLAY
         // ----------------------------------------------------
 
         clickOverlay.addEventListener(
