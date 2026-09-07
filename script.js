@@ -19,6 +19,14 @@ const YOUTUBE_PLAYLIST_ID = "PLYU2NhaIDiV8";
 
 
 // ============================================================
+// INFORMAČNÍ BUBLINKA
+// ============================================================
+
+const CHAOS_INFO_ACCEPTED_KEY =
+    "chaosTrendInfoAccepted";
+
+
+// ============================================================
 // 1. NAČTENÍ VIDEÍ Z KONKRÉTNÍHO PLAYLISTU
 // ============================================================
 
@@ -273,6 +281,154 @@ function playJingleThenVideo(video) {
 
 
 // ============================================================
+// 4.6 INFORMAČNÍ BUBLINKA
+// ============================================================
+
+function showChaosInfoBubble(
+    item,
+    video
+) {
+
+    // --------------------------------------------------------
+    // ZABRÁNÍ VYTVOŘENÍ DVOU BUBLIN
+    // --------------------------------------------------------
+
+    const oldBubble =
+        item.querySelector(
+            ".chaos-info-bubble"
+        );
+
+
+    if (oldBubble) {
+
+        oldBubble.remove();
+
+    }
+
+
+    // --------------------------------------------------------
+    // HLAVNÍ BUBLINKA
+    // --------------------------------------------------------
+
+    const bubble =
+        document.createElement("div");
+
+
+    bubble.className =
+        "chaos-info-bubble";
+
+
+    // --------------------------------------------------------
+    // TEXT
+    // --------------------------------------------------------
+
+    const text =
+        document.createElement("div");
+
+
+    text.className =
+        "chaos-info-text";
+
+
+    text.innerHTML =
+        "<strong>ℹ️ Jak to funguje?</strong><br><br>" +
+        "Po kliknutí na toto video se nejprve přehraje " +
+        "znělka. Potom se video otevře ve velkém okně nahoře.<br><br>" +
+        "Pro poslech nahrávky je potřeba potvrdit " +
+        "symbol 🔊 reproduktoru.";
+
+
+    bubble.appendChild(
+        text
+    );
+
+
+    // --------------------------------------------------------
+    // TLAČÍTKO
+    // --------------------------------------------------------
+
+    const button =
+        document.createElement("button");
+
+
+    button.type =
+        "button";
+
+
+    button.textContent =
+        "Rozumím";
+
+
+    button.className =
+        "chaos-info-button";
+
+
+    button.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            // -----------------------------------------------
+            // ZAPAMATOVÁNÍ POTVRZENÍ
+            // -----------------------------------------------
+
+            try {
+
+                localStorage.setItem(
+                    CHAOS_INFO_ACCEPTED_KEY,
+                    "true"
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "CHAOS TREND: potvrzení se nepodařilo uložit.",
+                    error
+                );
+
+            }
+
+
+            // -----------------------------------------------
+            // ODSTRANĚNÍ BUBLINY
+            // -----------------------------------------------
+
+            bubble.remove();
+
+
+            // -----------------------------------------------
+            // SPUŠTĚNÍ ZNĚLKY
+            // -----------------------------------------------
+
+            playJingleThenVideo(
+                video
+            );
+
+        }
+    );
+
+
+    bubble.appendChild(
+        button
+    );
+
+
+    // --------------------------------------------------------
+    // PŘIDÁNÍ BUBLINY DO KARTY
+    // --------------------------------------------------------
+
+    item.appendChild(
+        bubble
+    );
+
+}
+
+
+// ============================================================
 // 5. ZOBRAZENÍ HISTORIE VIDEÍ
 // ============================================================
 
@@ -351,6 +507,7 @@ function displayHistoryVideos(videos) {
 
 
         // ZAMEZENÍ TEXTOVÉMU KURZORU
+
         item.style.userSelect =
             "none";
 
@@ -365,6 +522,7 @@ function displayHistoryVideos(videos) {
 
         item.style.caretColor =
             "transparent";
+
 
         item.setAttribute(
             "unselectable",
@@ -397,6 +555,7 @@ function displayHistoryVideos(videos) {
 
 
         // ZAMEZENÍ TEXTOVÉMU KURZORU
+
         clickOverlay.style.userSelect =
             "none";
 
@@ -412,9 +571,14 @@ function displayHistoryVideos(videos) {
         clickOverlay.style.caretColor =
             "transparent";
 
+
         clickOverlay.tabIndex =
             -1;
 
+
+        // ----------------------------------------------------
+        // KLIK – ZOBRAZENÍ BUBLINY NEBO PŘÍMÉ SPUŠTĚNÍ
+        // ----------------------------------------------------
 
         clickOverlay.addEventListener(
             "mousedown",
@@ -432,7 +596,53 @@ function displayHistoryVideos(videos) {
 
                 event.preventDefault();
 
-                playJingleThenVideo(video);
+                event.stopPropagation();
+
+
+                let infoAccepted =
+                    false;
+
+
+                try {
+
+                    infoAccepted =
+                        localStorage.getItem(
+                            CHAOS_INFO_ACCEPTED_KEY
+                        ) === "true";
+
+                } catch (error) {
+
+                    console.warn(
+                        "CHAOS TREND: localStorage není dostupné.",
+                        error
+                    );
+
+                }
+
+
+                // ------------------------------------------------
+                // PRVNÍ KLIKNUTÍ
+                // ------------------------------------------------
+
+                if (!infoAccepted) {
+
+                    showChaosInfoBubble(
+                        item,
+                        video
+                    );
+
+                    return;
+
+                }
+
+
+                // ------------------------------------------------
+                // DALŠÍ KLIKNUTÍ
+                // ------------------------------------------------
+
+                playJingleThenVideo(
+                    video
+                );
 
             }
         );
@@ -473,7 +683,6 @@ function displayHistoryVideos(videos) {
             true;
 
 
-        // ZAMEZENÍ KLÁVESNÍMU FOKUSU
         iframe.tabIndex =
             -1;
 
@@ -669,75 +878,104 @@ async function loadChaosTrendYouTube() {
 // ============================================================
 
 loadChaosTrendYouTube();
-/* ============================================================
-   CHAOS TREND – HODINY A DATUM
-   ============================================================ */
+
+
+// ============================================================
+// CHAOS TREND – HODINY A DATUM
+// ============================================================
 
 function updateChaosClock() {
 
-    const now = new Date();
+    const now =
+        new Date();
 
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
+
+    const hours =
+        now.getHours();
+
+    const minutes =
+        now.getMinutes();
+
+    const seconds =
+        now.getSeconds();
+
 
     const hourAngle =
         ((hours % 12) * 30) +
         (minutes * 0.5);
 
+
     const minuteAngle =
         (minutes * 6) +
         (seconds * 0.1);
 
+
     const secondAngle =
         seconds * 6;
+
 
     const hourHand =
         document.getElementById(
             "clock-hour-hand"
         );
 
+
     const minuteHand =
         document.getElementById(
             "clock-minute-hand"
         );
+
 
     const secondHand =
         document.getElementById(
             "clock-second-hand"
         );
 
+
     if (hourHand) {
+
         hourHand.style.transform =
             "rotate(" +
             hourAngle +
             "deg)";
+
     }
 
+
     if (minuteHand) {
+
         minuteHand.style.transform =
             "rotate(" +
             minuteAngle +
             "deg)";
+
     }
 
+
     if (secondHand) {
+
         secondHand.style.transform =
             "rotate(" +
             secondAngle +
             "deg)";
+
     }
+
 
     const pad =
         function(number) {
+
             return String(number)
                 .padStart(2, "0");
+
         };
+
 
     const digitalClock =
         document.getElementById(
             "chaos-digital-clock"
         );
+
 
     if (digitalClock) {
 
@@ -750,10 +988,12 @@ function updateChaosClock() {
 
     }
 
+
     const dateElement =
         document.getElementById(
             "chaos-date"
         );
+
 
     if (dateElement) {
 
@@ -771,7 +1011,9 @@ function updateChaosClock() {
 
 }
 
+
 updateChaosClock();
+
 
 setInterval(
     updateChaosClock,
