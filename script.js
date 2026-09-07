@@ -1,4 +1,4 @@
-// ============================================================
+// ===========================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // JAK TO VIDÍ ČÁP?
 // ============================================================
@@ -274,7 +274,13 @@ function displayHistoryVideos(videos) {
         item.className =
             "chaos-opinion-item";
 
+item.style.cursor = "pointer";
 
+item.addEventListener("click", function() {
+
+    displayMainVideo(video);
+
+});
         // ----------------------------------------------------
         // YOUTUBE IFRAME
         // ----------------------------------------------------
