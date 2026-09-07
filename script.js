@@ -1,3 +1,4 @@
+javascript
 // ===========================================================
 // CHAOS TREND – AUTOMATICKÁ YOUTUBE VIDEA
 // JAK TO VIDÍ ČÁP?
@@ -8,7 +9,7 @@
 // API KLÍČ
 // ============================================================
 
-const YOUTUBE_API_KEY = "AIzaSyCbO-FprtNOl_3tKRsr3c7nJIK0hl7n5Mw";
+const YOUTUBE_API_KEY = "SEM PONECH SVŮJ PŮVODNÍ API KLÍČ";
 
 
 // ============================================================
