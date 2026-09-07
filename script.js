@@ -1,4 +1,3 @@
-javascript
 // ============================================================
 // 5. ZOBRAZENÍ HISTORIE VIDEÍ
 // ============================================================
@@ -11,39 +10,25 @@ function displayHistoryVideos(videos) {
         );
 
     if (!container) {
-
         console.error(
             "CHAOS TREND: kontejner historie nebyl nalezen."
         );
-
         return;
     }
 
     container.innerHTML = "";
 
-    /*
-        VIDEO 0
-        = nejnovější video
-        = velké hlavní okno
-
-        VIDEO 1+
-        = historická malá okna
-    */
-
     if (!Array.isArray(videos) || videos.length < 2) {
-
         console.log(
             "CHAOS TREND: Zatím není dost historických videí."
         );
-
         return;
     }
 
-    for (
-        let i = 1;
-        i < videos.length;
-        i++
-    ) {
+    // VIDEO 0 = nejnovější video v hlavním okně
+    // VIDEO 1+ = starší videa v historických oknech
+
+    for (let i = 1; i < videos.length; i++) {
 
         const video = videos[i];
 
@@ -52,7 +37,7 @@ function displayHistoryVideos(videos) {
         }
 
         // ----------------------------------------------------
-        // KARTA VIDEA
+        // KARTA HISTORICKÉHO VIDEA
         // ----------------------------------------------------
 
         const item =
@@ -60,7 +45,6 @@ function displayHistoryVideos(videos) {
 
         item.className =
             "chaos-opinion-item";
-
 
         // ----------------------------------------------------
         // NÁHLED VIDEA
@@ -84,13 +68,9 @@ function displayHistoryVideos(videos) {
 
         preview.setAttribute(
             "aria-label",
-            "Přehrát video: " + video.title
+            "Přehrát video: " +
+            (video.title || "Video CHAOS TREND")
         );
-
-
-        // ----------------------------------------------------
-        // OBRÁZEK Z YOUTUBE
-        // ----------------------------------------------------
 
         const image =
             document.createElement("img");
@@ -108,9 +88,12 @@ function displayHistoryVideos(videos) {
         image.loading =
             "lazy";
 
+        preview.appendChild(
+            image
+        );
 
         // ----------------------------------------------------
-        // PLAY
+        // TLAČÍTKO PLAY
         // ----------------------------------------------------
 
         const play =
@@ -122,43 +105,19 @@ function displayHistoryVideos(videos) {
         play.innerHTML =
             "▶";
 
-        play.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-
-        preview.appendChild(
-            image
-        );
-
         preview.appendChild(
             play
         );
 
-
-        // ----------------------------------------------------
-        // OTEVŘENÍ VIDEA KLIKNUTÍM
-        // ----------------------------------------------------
-
-        function openVideo() {
-
-            openChaosOpinionVideo(
-                video
-            );
-
-        }
-
+        // Kliknutí na náhled
         preview.addEventListener(
             "click",
-            openVideo
+            function() {
+                openChaosOpinionVideo(video);
+            }
         );
 
-
-        // ----------------------------------------------------
-        // OTEVŘENÍ KLÁVESOU ENTER / MEZERNÍK
-        // ----------------------------------------------------
-
+        // Klávesnice – Enter / mezerník
         preview.addEventListener(
             "keydown",
             function(event) {
@@ -167,24 +126,21 @@ function displayHistoryVideos(videos) {
                     event.key === "Enter" ||
                     event.key === " "
                 ) {
-
                     event.preventDefault();
 
-                    openVideo();
-
+                    openChaosOpinionVideo(
+                        video
+                    );
                 }
-
             }
         );
-
 
         item.appendChild(
             preview
         );
 
-
         // ----------------------------------------------------
-        // NÁZEV VIDEA
+        // NÁZEV
         // ----------------------------------------------------
 
         const title =
@@ -200,7 +156,6 @@ function displayHistoryVideos(videos) {
         item.appendChild(
             title
         );
-
 
         // ----------------------------------------------------
         // DATUM
@@ -221,44 +176,41 @@ function displayHistoryVideos(videos) {
             date
         );
 
-
         // ----------------------------------------------------
         // ODKAZ NA YOUTUBE
         // ----------------------------------------------------
 
-        const youtubeLink =
+        const youtube =
             document.createElement("a");
 
-        youtubeLink.className =
+        youtube.className =
             "chaos-opinion-youtube";
 
-        youtubeLink.href =
+        youtube.href =
             video.url ||
             "https://www.youtube.com/watch?v=" +
             video.id;
 
-        youtubeLink.target =
+        youtube.target =
             "_blank";
 
-        youtubeLink.rel =
+        youtube.rel =
             "noopener noreferrer";
 
-        youtubeLink.textContent =
-            "YouTube ↗";
+        youtube.textContent =
+            "▶ YouTube ↗";
 
         item.appendChild(
-            youtubeLink
+            youtube
         );
 
-
         // ----------------------------------------------------
-        // PŘIDÁNÍ KARTY DO HISTORIE
+        // HOTOVÁ KARTA
         // ----------------------------------------------------
 
         container.appendChild(
             item
         );
-
 
         console.log(
             "CHAOS TREND: HISTORICKÉ VIDEO:",
@@ -277,23 +229,16 @@ function displayHistoryVideos(videos) {
 function openChaosOpinionVideo(video) {
 
     if (!video || !video.id) {
-
-        console.error(
-            "CHAOS TREND: Nelze otevřít video – chybí ID."
-        );
-
         return;
     }
-
 
     let modal =
         document.getElementById(
             "chaos-opinion-modal"
         );
 
-
     // --------------------------------------------------------
-    // VYTVOŘENÍ MODÁLNÍHO OKNA
+    // MODAL VYTVOŘÍME POUZE JEDNOU
     // --------------------------------------------------------
 
     if (!modal) {
@@ -308,7 +253,6 @@ function openChaosOpinionVideo(video) {
             "chaos-opinion-modal";
 
         modal.innerHTML = `
-
             <div class="chaos-opinion-modal-box">
 
                 <button
@@ -339,23 +283,17 @@ function openChaosOpinionVideo(video) {
                     class="chaos-opinion-modal-youtube"
                     target="_blank"
                     rel="noopener noreferrer">
-                    ▶ Otevřít video na YouTube
+                    ▶ Otevřít video na YouTube ↗
                 </a>
 
             </div>
-
         `;
-
 
         document.body.appendChild(
             modal
         );
 
-
-        // ----------------------------------------------------
-        // ZAVŘENÍ TLAČÍTKEM
-        // ----------------------------------------------------
-
+        // Zavření křížkem
         const closeButton =
             modal.querySelector(
                 ".chaos-opinion-modal-close"
@@ -367,14 +305,9 @@ function openChaosOpinionVideo(video) {
                 "click",
                 closeChaosOpinionVideo
             );
-
         }
 
-
-        // ----------------------------------------------------
-        // ZAVŘENÍ KLIKNUTÍM MIMO VIDEO
-        // ----------------------------------------------------
-
+        // Zavření kliknutím mimo video
         modal.addEventListener(
             "click",
             function(event) {
@@ -382,19 +315,14 @@ function openChaosOpinionVideo(video) {
                 if (
                     event.target === modal
                 ) {
-
                     closeChaosOpinionVideo();
-
                 }
-
             }
         );
-
     }
 
-
     // --------------------------------------------------------
-    // PRVKY MODÁLNÍHO OKNA
+    // NAPLNĚNÍ MODALU VIDEEM
     // --------------------------------------------------------
 
     const iframe =
@@ -412,20 +340,9 @@ function openChaosOpinionVideo(video) {
             "chaos-opinion-modal-youtube"
         );
 
-
     if (!iframe) {
-
-        console.error(
-            "CHAOS TREND: přehrávač modálního okna nebyl nalezen."
-        );
-
         return;
     }
-
-
-    // --------------------------------------------------------
-    // NAČTENÍ VIDEA
-    // --------------------------------------------------------
 
     iframe.src =
         "https://www.youtube.com/embed/" +
@@ -436,15 +353,12 @@ function openChaosOpinionVideo(video) {
         video.title ||
         "Video CHAOS TREND";
 
-
     if (title) {
 
         title.textContent =
             video.title ||
             "Video CHAOS TREND";
-
     }
-
 
     if (youtubeLink) {
 
@@ -452,27 +366,15 @@ function openChaosOpinionVideo(video) {
             video.url ||
             "https://www.youtube.com/watch?v=" +
             video.id;
-
     }
 
-
-    // --------------------------------------------------------
-    // OTEVŘENÍ
-    // --------------------------------------------------------
-
+    // Otevření
     modal.classList.add(
         "is-open"
     );
 
     document.body.style.overflow =
         "hidden";
-
-
-    console.log(
-        "CHAOS TREND: otevřeno historické video:",
-        video.title,
-        video.id
-    );
 }
 
 
@@ -491,34 +393,22 @@ function closeChaosOpinionVideo() {
         return;
     }
 
-
     const iframe =
         document.getElementById(
             "chaos-opinion-modal-video"
         );
 
-
-    // Zastavení videa odstraněním zdroje iframe
+    // Zastavení videa
     if (iframe) {
-
-        iframe.src =
-            "";
-
+        iframe.src = "";
     }
-
 
     modal.classList.remove(
         "is-open"
     );
 
-
     document.body.style.overflow =
         "";
-
-
-    console.log(
-        "CHAOS TREND: historické video zavřeno."
-    );
 }
 
 
@@ -533,11 +423,7 @@ document.addEventListener(
         if (
             event.key === "Escape"
         ) {
-
             closeChaosOpinionVideo();
-
         }
-
     }
 );
-
