@@ -287,7 +287,8 @@ function playJingleThenVideo(video) {
 
 function showChaosInfoBubble(
     item,
-    video
+    video,
+    clickOverlay
 ) {
 
     // --------------------------------------------------------
@@ -308,6 +309,22 @@ function showChaosInfoBubble(
 
 
     // --------------------------------------------------------
+    // DŮLEŽITÉ:
+    // DOČASNĚ VYPNEME KLIKACÍ VRSTVU VIDEA
+    //
+    // Díky tomu nemůže overlay překrýt tlačítko
+    // „Rozumím“.
+    // --------------------------------------------------------
+
+    if (clickOverlay) {
+
+        clickOverlay.style.pointerEvents =
+            "none";
+
+    }
+
+
+    // --------------------------------------------------------
     // HLAVNÍ BUBLINKA
     // --------------------------------------------------------
 
@@ -319,12 +336,12 @@ function showChaosInfoBubble(
         "chaos-info-bubble";
 
 
-    // --------------------------------------------------------
-    // DŮLEŽITÉ – BUBLINKA MUSÍ PŘIJÍMAT KLIKNUTÍ
-    // --------------------------------------------------------
+    bubble.style.position =
+        "absolute";
+
 
     bubble.style.zIndex =
-        "100";
+        "9999";
 
 
     bubble.style.pointerEvents =
@@ -376,16 +393,12 @@ function showChaosInfoBubble(
         "chaos-info-button";
 
 
-    // --------------------------------------------------------
-    // DŮLEŽITÉ – TLAČÍTKO MUSÍ BÝT NAD OVERLAYEM
-    // --------------------------------------------------------
-
     button.style.position =
         "relative";
 
 
     button.style.zIndex =
-        "101";
+        "10000";
 
 
     button.style.pointerEvents =
@@ -439,6 +452,18 @@ function showChaosInfoBubble(
 
 
             // ------------------------------------------------
+            // ZNOVU POVOLÍME KLIKACÍ VRSTVU
+            // ------------------------------------------------
+
+            if (clickOverlay) {
+
+                clickOverlay.style.pointerEvents =
+                    "auto";
+
+            }
+
+
+            // ------------------------------------------------
             // SPUŠTĚNÍ ZNĚLKY
             // ------------------------------------------------
 
@@ -461,6 +486,11 @@ function showChaosInfoBubble(
 
     item.appendChild(
         bubble
+    );
+
+
+    console.log(
+        "CHAOS TREND: informační bublina zobrazena."
     );
 
 }
@@ -489,7 +519,8 @@ function displayHistoryVideos(videos) {
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     /*
@@ -544,19 +575,25 @@ function displayHistoryVideos(videos) {
             "relative";
 
 
+        // ----------------------------------------------------
         // ZAMEZENÍ TEXTOVÉMU KURZORU
+        // ----------------------------------------------------
 
         item.style.userSelect =
             "none";
 
+
         item.style.webkitUserSelect =
             "none";
+
 
         item.style.mozUserSelect =
             "none";
 
+
         item.style.msUserSelect =
             "none";
+
 
         item.style.caretColor =
             "transparent";
@@ -592,19 +629,29 @@ function displayHistoryVideos(videos) {
             "10";
 
 
+        clickOverlay.style.pointerEvents =
+            "auto";
+
+
+        // ----------------------------------------------------
         // ZAMEZENÍ TEXTOVÉMU KURZORU
+        // ----------------------------------------------------
 
         clickOverlay.style.userSelect =
             "none";
 
+
         clickOverlay.style.webkitUserSelect =
             "none";
+
 
         clickOverlay.style.mozUserSelect =
             "none";
 
+
         clickOverlay.style.msUserSelect =
             "none";
+
 
         clickOverlay.style.caretColor =
             "transparent";
@@ -615,7 +662,7 @@ function displayHistoryVideos(videos) {
 
 
         // ----------------------------------------------------
-        // KLIKNUTÍ NA OVERLAY
+        // KLIKNUTÍ NA OVERLAY – MOUSEDOWN
         // ----------------------------------------------------
 
         clickOverlay.addEventListener(
@@ -627,6 +674,10 @@ function displayHistoryVideos(videos) {
             }
         );
 
+
+        // ----------------------------------------------------
+        // KLIKNUTÍ NA OVERLAY
+        // ----------------------------------------------------
 
         clickOverlay.addEventListener(
             "click",
@@ -648,6 +699,7 @@ function displayHistoryVideos(videos) {
                             CHAOS_INFO_ACCEPTED_KEY
                         ) === "true";
 
+
                 } catch (error) {
 
                     console.warn(
@@ -666,8 +718,10 @@ function displayHistoryVideos(videos) {
 
                     showChaosInfoBubble(
                         item,
-                        video
+                        video,
+                        clickOverlay
                     );
+
 
                     return;
 
@@ -749,8 +803,10 @@ function displayHistoryVideos(videos) {
         title.style.userSelect =
             "none";
 
+
         title.style.webkitUserSelect =
             "none";
+
 
         title.style.caretColor =
             "transparent";
@@ -780,8 +836,10 @@ function displayHistoryVideos(videos) {
         date.style.userSelect =
             "none";
 
+
         date.style.webkitUserSelect =
             "none";
+
 
         date.style.caretColor =
             "transparent";
@@ -931,8 +989,10 @@ function updateChaosClock() {
     const hours =
         now.getHours();
 
+
     const minutes =
         now.getMinutes();
+
 
     const seconds =
         now.getSeconds();
