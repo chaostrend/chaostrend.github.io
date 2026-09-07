@@ -118,7 +118,8 @@ function prepareYouTubeVideos(items) {
                     item.snippet?.publishedAt ||
                     "",
 
-                thumbnail: thumbnail,
+                thumbnail:
+                    thumbnail,
 
                 url:
                     "https://www.youtube.com/watch?v=" +
@@ -283,21 +284,24 @@ function playJingleThenVideo(video) {
 
 // ============================================================
 // 4.6 INFORMAČNÍ BUBLINKA
+//
+// DŮLEŽITÉ:
+// Bublina se NEVKLÁDÁ do karty videa.
+// Vkládá se přímo do BODY stránky.
+// Tím ji nemůže překrýt YouTube iframe ani clickOverlay.
 // ============================================================
 
 function showChaosInfoBubble(
-    item,
-    video,
-    clickOverlay
+    video
 ) {
 
     // --------------------------------------------------------
-    // ZABRÁNĚNÍ VYTVOŘENÍ DVOU BUBLIN
+    // Pokud už nějaká bublina existuje, odstraníme ji
     // --------------------------------------------------------
 
     const oldBubble =
-        item.querySelector(
-            ".chaos-info-bubble"
+        document.getElementById(
+            "chaos-info-overlay"
         );
 
 
@@ -309,23 +313,79 @@ function showChaosInfoBubble(
 
 
     // --------------------------------------------------------
-    // DŮLEŽITÉ:
-    // DOČASNĚ VYPNEME KLIKACÍ VRSTVU VIDEA
-    //
-    // Díky tomu nemůže overlay překrýt tlačítko
-    // „Rozumím“.
+    // CELOPLOŠNÝ OBAL
     // --------------------------------------------------------
 
-    if (clickOverlay) {
+    const overlay =
+        document.createElement("div");
 
-        clickOverlay.style.pointerEvents =
-            "none";
 
-    }
+    overlay.id =
+        "chaos-info-overlay";
+
+
+    overlay.style.position =
+        "fixed";
+
+
+    overlay.style.left =
+        "0";
+
+
+    overlay.style.top =
+        "0";
+
+
+    overlay.style.right =
+        "0";
+
+
+    overlay.style.bottom =
+        "0";
+
+
+    overlay.style.width =
+        "100vw";
+
+
+    overlay.style.height =
+        "100vh";
+
+
+    overlay.style.background =
+        "rgba(0, 0, 0, 0.55)";
+
+
+    overlay.style.display =
+        "flex";
+
+
+    overlay.style.alignItems =
+        "center";
+
+
+    overlay.style.justifyContent =
+        "center";
+
+
+    overlay.style.zIndex =
+        "2147483647";
+
+
+    overlay.style.pointerEvents =
+        "auto";
+
+
+    overlay.style.boxSizing =
+        "border-box";
+
+
+    overlay.style.padding =
+        "20px";
 
 
     // --------------------------------------------------------
-    // HLAVNÍ BUBLINKA
+    // VLASTNÍ BUBLINKA
     // --------------------------------------------------------
 
     const bubble =
@@ -337,11 +397,47 @@ function showChaosInfoBubble(
 
 
     bubble.style.position =
-        "absolute";
+        "relative";
 
 
-    bubble.style.zIndex =
-        "9999";
+    bubble.style.width =
+        "min(90vw, 420px)";
+
+
+    bubble.style.maxWidth =
+        "420px";
+
+
+    bubble.style.boxSizing =
+        "border-box";
+
+
+    bubble.style.padding =
+        "25px";
+
+
+    bubble.style.background =
+        "rgba(0, 0, 0, 0.97)";
+
+
+    bubble.style.color =
+        "white";
+
+
+    bubble.style.border =
+        "2px solid white";
+
+
+    bubble.style.borderRadius =
+        "16px";
+
+
+    bubble.style.textAlign =
+        "center";
+
+
+    bubble.style.boxShadow =
+        "0 10px 40px rgba(0,0,0,0.7)";
 
 
     bubble.style.pointerEvents =
@@ -361,11 +457,23 @@ function showChaosInfoBubble(
 
 
     text.innerHTML =
-        "<strong>ℹ️ Jak to funguje?</strong><br><br>" +
+        "<strong style=\"font-size:20px;\">" +
+        "ℹ️ Jak to funguje?" +
+        "</strong>" +
+
+        "<br><br>" +
+
+        "<span style=\"font-size:16px; line-height:1.6;\">" +
+
         "Po kliknutí na toto video se nejprve přehraje " +
-        "znělka. Potom se video otevře ve velkém okně nahoře.<br><br>" +
+        "znělka. Potom se video otevře ve velkém okně nahoře." +
+
+        "<br><br>" +
+
         "Pro poslech nahrávky je potřeba potvrdit " +
-        "symbol 🔊 reproduktoru.";
+        "symbol 🔊 reproduktoru." +
+
+        "</span>";
 
 
     bubble.appendChild(
@@ -374,7 +482,7 @@ function showChaosInfoBubble(
 
 
     // --------------------------------------------------------
-    // TLAČÍTKO „ROZUMÍM“
+    // TLAČÍTKO
     // --------------------------------------------------------
 
     const button =
@@ -393,16 +501,56 @@ function showChaosInfoBubble(
         "chaos-info-button";
 
 
+    button.style.display =
+        "inline-block";
+
+
+    button.style.marginTop =
+        "20px";
+
+
+    button.style.padding =
+        "11px 30px";
+
+
+    button.style.border =
+        "none";
+
+
+    button.style.borderRadius =
+        "8px";
+
+
+    button.style.background =
+        "white";
+
+
+    button.style.color =
+        "black";
+
+
+    button.style.fontSize =
+        "16px";
+
+
+    button.style.fontWeight =
+        "bold";
+
+
+    button.style.cursor =
+        "pointer";
+
+
+    button.style.pointerEvents =
+        "auto";
+
+
     button.style.position =
         "relative";
 
 
     button.style.zIndex =
-        "10000";
-
-
-    button.style.pointerEvents =
-        "auto";
+        "2147483647";
 
 
     // --------------------------------------------------------
@@ -419,12 +567,12 @@ function showChaosInfoBubble(
 
 
             console.log(
-                "CHAOS TREND: uživatel potvrdil informační upozornění."
+                "CHAOS TREND: uživatel klikl na ROZUMÍM."
             );
 
 
             // ------------------------------------------------
-            // ZAPAMATOVÁNÍ POTVRZENÍ
+            // ULOŽENÍ POTVRZENÍ
             // ------------------------------------------------
 
             try {
@@ -434,10 +582,11 @@ function showChaosInfoBubble(
                     "true"
                 );
 
+
             } catch (error) {
 
                 console.warn(
-                    "CHAOS TREND: potvrzení se nepodařilo uložit.",
+                    "CHAOS TREND: localStorage není dostupné.",
                     error
                 );
 
@@ -448,19 +597,7 @@ function showChaosInfoBubble(
             // ODSTRANĚNÍ BUBLINY
             // ------------------------------------------------
 
-            bubble.remove();
-
-
-            // ------------------------------------------------
-            // ZNOVU POVOLÍME KLIKACÍ VRSTVU
-            // ------------------------------------------------
-
-            if (clickOverlay) {
-
-                clickOverlay.style.pointerEvents =
-                    "auto";
-
-            }
+            overlay.remove();
 
 
             // ------------------------------------------------
@@ -481,16 +618,25 @@ function showChaosInfoBubble(
 
 
     // --------------------------------------------------------
-    // PŘIDÁNÍ BUBLINY DO KARTY
+    // BUBLINU VLOŽÍME DO CELOPLOŠNÉHO OVERLAYE
     // --------------------------------------------------------
 
-    item.appendChild(
+    overlay.appendChild(
         bubble
     );
 
 
+    // --------------------------------------------------------
+    // OVERLAY VLOŽÍME PŘÍMO DO BODY
+    // --------------------------------------------------------
+
+    document.body.appendChild(
+        overlay
+    );
+
+
     console.log(
-        "CHAOS TREND: informační bublina zobrazena."
+        "CHAOS TREND: informační bublina zobrazena nad celou stránkou."
     );
 
 }
@@ -633,10 +779,6 @@ function displayHistoryVideos(videos) {
             "auto";
 
 
-        // ----------------------------------------------------
-        // ZAMEZENÍ TEXTOVÉMU KURZORU
-        // ----------------------------------------------------
-
         clickOverlay.style.userSelect =
             "none";
 
@@ -662,7 +804,7 @@ function displayHistoryVideos(videos) {
 
 
         // ----------------------------------------------------
-        // KLIKNUTÍ NA OVERLAY – MOUSEDOWN
+        // MOUSEDOWN
         // ----------------------------------------------------
 
         clickOverlay.addEventListener(
@@ -676,7 +818,7 @@ function displayHistoryVideos(videos) {
 
 
         // ----------------------------------------------------
-        // KLIKNUTÍ NA OVERLAY
+        // KLIKNUTÍ NA HISTORICKÉ VIDEO
         // ----------------------------------------------------
 
         clickOverlay.addEventListener(
@@ -717,9 +859,7 @@ function displayHistoryVideos(videos) {
                 if (!infoAccepted) {
 
                     showChaosInfoBubble(
-                        item,
-                        video,
-                        clickOverlay
+                        video
                     );
 
 
