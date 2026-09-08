@@ -19,7 +19,7 @@ const YOUTUBE_PLAYLIST_ID = "PLYU2NhaIDiV8";
 
 
 // ============================================================
-// INFORMAČNÍ BUBLINKA
+// INFORMAČNÍ BUBLINKA „JAK TO FUNGUJE?“
 // ============================================================
 
 const CHAOS_INFO_ACCEPTED_KEY =
@@ -27,7 +27,148 @@ const CHAOS_INFO_ACCEPTED_KEY =
 
 
 // ============================================================
-// 1. NAČTENÍ VIDEÍ Z KONKRÉTNÍHO PLAYLISTU
+// PROMĚNNÉ PRO YOUTUBE IFRAME API
+// ============================================================
+
+let chaosMainYouTubePlayer =
+    null;
+
+let chaosYouTubeAPIReadyPromise =
+    null;
+
+let chaosMainVideoPendingId =
+    null;
+
+
+// ============================================================
+// PROMĚNNÉ PRO NOVOU BUBLINU PO SKONČENÍ VIDEA
+// ============================================================
+
+let chaosLikeBubbleTimer =
+    null;
+
+let chaosLikeBubbleHideTimer =
+    null;
+
+
+// ============================================================
+// 1. NAČTENÍ YOUTUBE IFRAME API
+// ============================================================
+
+function loadChaosYouTubeAPI() {
+
+    if (
+        window.YT &&
+        window.YT.Player
+    ) {
+
+        return Promise.resolve();
+
+    }
+
+
+    if (
+        chaosYouTubeAPIReadyPromise
+    ) {
+
+        return chaosYouTubeAPIReadyPromise;
+
+    }
+
+
+    chaosYouTubeAPIReadyPromise =
+        new Promise(
+            function(resolve, reject) {
+
+                const previousCallback =
+                    window.onYouTubeIframeAPIReady;
+
+
+                window.onYouTubeIframeAPIReady =
+                    function() {
+
+                        if (
+                            typeof previousCallback ===
+                            "function"
+                        ) {
+
+                            try {
+
+                                previousCallback();
+
+                            } catch (error) {
+
+                                console.warn(
+                                    "CHAOS TREND: původní YouTube callback způsobil chybu.",
+                                    error
+                                );
+
+                            }
+
+                        }
+
+
+                        resolve();
+
+                    };
+
+
+                const existingScript =
+                    document.getElementById(
+                        "chaos-youtube-iframe-api"
+                    );
+
+
+                if (
+                    existingScript
+                ) {
+
+                    return;
+
+                }
+
+
+                const script =
+                    document.createElement(
+                        "script"
+                    );
+
+
+                script.id =
+                    "chaos-youtube-iframe-api";
+
+                script.src =
+                    "https://www.youtube.com/iframe_api";
+
+                script.async =
+                    true;
+
+
+                script.onerror =
+                    function(error) {
+
+                        reject(
+                            error
+                        );
+
+                    };
+
+
+                document.head.appendChild(
+                    script
+                );
+
+            }
+        );
+
+
+    return chaosYouTubeAPIReadyPromise;
+
+}
+
+
+// ============================================================
+// 2. NAČTENÍ VIDEÍ Z KONKRÉTNÍHO PLAYLISTU
 // ============================================================
 
 async function getChaosOpinionPlaylistVideos() {
@@ -36,20 +177,29 @@ async function getChaosOpinionPlaylistVideos() {
         "https://www.googleapis.com/youtube/v3/playlistItems" +
         "?part=snippet,contentDetails" +
         "&playlistId=" +
-        encodeURIComponent(YOUTUBE_PLAYLIST_ID) +
+        encodeURIComponent(
+            YOUTUBE_PLAYLIST_ID
+        ) +
         "&maxResults=50" +
         "&key=" +
-        encodeURIComponent(YOUTUBE_API_KEY);
+        encodeURIComponent(
+            YOUTUBE_API_KEY
+        );
 
 
     const response =
-        await fetch(url);
+        await fetch(
+            url
+        );
 
 
-    if (!response.ok) {
+    if (
+        !response.ok
+    ) {
 
         const errorText =
             await response.text();
+
 
         throw new Error(
             "Playlist YouTube se nepodařilo načíst. " +
@@ -71,94 +221,610 @@ async function getChaosOpinionPlaylistVideos() {
 
 
 // ============================================================
-// 2. PŘÍPRAVA VIDEÍ
+// 3. PŘÍPRAVA VIDEÍ
 // ============================================================
 
-function prepareYouTubeVideos(items) {
+function prepareYouTubeVideos(
+    items
+) {
 
     return items
 
-        .map(function(item) {
+        .map(
+            function(item) {
 
-            const videoId =
-                item.contentDetails?.videoId ||
-                item.snippet?.resourceId?.videoId;
+                const videoId =
+                    item.contentDetails?.videoId ||
+                    item.snippet?.resourceId?.videoId;
 
 
-            if (!videoId) {
+                if (
+                    !videoId
+                ) {
 
-                return null;
+                    return null;
+
+                }
+
+
+                const thumbnails =
+                    item.snippet?.thumbnails ||
+                    {};
+
+
+                const thumbnail =
+                    thumbnails.maxres?.url ||
+                    thumbnails.standard?.url ||
+                    thumbnails.high?.url ||
+                    thumbnails.medium?.url ||
+                    thumbnails.default?.url ||
+                    "";
+
+
+                return {
+
+                    id:
+                        videoId,
+
+                    title:
+                        item.snippet?.title ||
+                        "Video CHAOS TREND",
+
+                    date:
+                        item.contentDetails?.videoPublishedAt ||
+                        item.snippet?.publishedAt ||
+                        "",
+
+                    thumbnail:
+                        thumbnail,
+
+                    url:
+                        "https://www.youtube.com/watch?v=" +
+                        videoId
+
+                };
 
             }
+        )
 
+        .filter(
+            function(video) {
 
-            const thumbnails =
-                item.snippet?.thumbnails || {};
+                return video !== null;
 
-
-            const thumbnail =
-                thumbnails.maxres?.url ||
-                thumbnails.standard?.url ||
-                thumbnails.high?.url ||
-                thumbnails.medium?.url ||
-                thumbnails.default?.url ||
-                "";
-
-
-            return {
-
-                id: videoId,
-
-                title:
-                    item.snippet?.title ||
-                    "Video CHAOS TREND",
-
-                date:
-                    item.contentDetails?.videoPublishedAt ||
-                    item.snippet?.publishedAt ||
-                    "",
-
-                thumbnail:
-                    thumbnail,
-
-                url:
-                    "https://www.youtube.com/watch?v=" +
-                    videoId
-
-            };
-
-        })
-
-        .filter(function(video) {
-
-            return video !== null;
-
-        });
+            }
+        );
 
 }
 
 
 // ============================================================
-// 3. SEŘAZENÍ PODLE DATA
+// 4. SEŘAZENÍ PODLE DATA
 // ============================================================
 
-function sortVideosByDate(videos) {
+function sortVideosByDate(
+    videos
+) {
 
-    return videos.sort(function(a, b) {
+    return videos.sort(
+        function(a, b) {
 
-        return new Date(b.date) -
-               new Date(a.date);
+            return new Date(b.date) -
+                   new Date(a.date);
 
-    });
+        }
+    );
 
 }
 
 
 // ============================================================
-// 4. ZOBRAZENÍ HLAVNÍHO VIDEA
+// 5. BUBLINKA PO SKONČENÍ VIDEA
+//
+// DŮLEŽITÉ:
+// - NEPOUŽÍVÁ localStorage
+// - zobrazí se při KAŽDÉM dokončení videa
+// - automaticky zmizí po 8 sekundách
 // ============================================================
 
-function displayMainVideo(video) {
+function showChaosLikeBubble() {
+
+    const oldBubble =
+        document.getElementById(
+            "chaos-like-bubble"
+        );
+
+
+    if (
+        oldBubble
+    ) {
+
+        oldBubble.remove();
+
+    }
+
+
+    if (
+        chaosLikeBubbleTimer
+    ) {
+
+        clearTimeout(
+            chaosLikeBubbleTimer
+        );
+
+        chaosLikeBubbleTimer =
+            null;
+
+    }
+
+
+    if (
+        chaosLikeBubbleHideTimer
+    ) {
+
+        clearTimeout(
+            chaosLikeBubbleHideTimer
+        );
+
+        chaosLikeBubbleHideTimer =
+            null;
+
+    }
+
+
+    const iframe =
+        document.getElementById(
+            "chaos-opinion-main-video"
+        );
+
+
+    if (
+        !iframe
+    ) {
+
+        return;
+
+    }
+
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+
+    bubble.id =
+        "chaos-like-bubble";
+
+
+    bubble.style.position =
+        "fixed";
+
+
+    bubble.style.zIndex =
+        "2147483646";
+
+
+    bubble.style.width =
+        "min(90vw, 430px)";
+
+
+    bubble.style.maxWidth =
+        "430px";
+
+
+    bubble.style.boxSizing =
+        "border-box";
+
+
+    bubble.style.padding =
+        "13px 18px";
+
+
+    bubble.style.background =
+        "rgba(0, 0, 0, 0.88)";
+
+
+    bubble.style.color =
+        "white";
+
+
+    bubble.style.border =
+        "1px solid rgba(255,255,255,0.65)";
+
+
+    bubble.style.borderRadius =
+        "12px";
+
+
+    bubble.style.textAlign =
+        "center";
+
+
+    bubble.style.fontSize =
+        "14px";
+
+
+    bubble.style.lineHeight =
+        "1.45";
+
+
+    bubble.style.boxShadow =
+        "0 5px 25px rgba(0,0,0,0.45)";
+
+
+    bubble.style.pointerEvents =
+        "none";
+
+
+    bubble.style.opacity =
+        "0";
+
+
+    bubble.style.transition =
+        "opacity 0.45s ease";
+
+
+    bubble.innerHTML =
+        "Pokud se vám video líbí, nezapomeňte dát " +
+        "<strong>Like 👍</strong> nebo " +
+        "<strong>odběr</strong> na YouTube kanálu Josefa Čápa." +
+        "<br>" +
+        "<span style=\"opacity:0.85;\">" +
+        "Odkaz na YouTube najdete níže." +
+        "</span>";
+
+
+    document.body.appendChild(
+        bubble
+    );
+
+
+    // --------------------------------------------------------
+    // UMÍSTĚNÍ BUBLINY K VELKÉMU VIDEU
+    // --------------------------------------------------------
+
+    const rect =
+        iframe.getBoundingClientRect();
+
+
+    const bubbleRect =
+        bubble.getBoundingClientRect();
+
+
+    const margin =
+        12;
+
+
+    let left =
+        rect.left +
+        (rect.width / 2) -
+        (bubbleRect.width / 2);
+
+
+    let top =
+        rect.bottom +
+        margin;
+
+
+    // Pokud není místo pod videem,
+    // umístíme bublinu nad video.
+
+    if (
+        top +
+        bubbleRect.height >
+        window.innerHeight -
+        10
+    ) {
+
+        top =
+            rect.top -
+            bubbleRect.height -
+            margin;
+
+    }
+
+
+    // Ochrana před vyjetím mimo levou stranu.
+
+    if (
+        left <
+        10
+    ) {
+
+        left =
+            10;
+
+    }
+
+
+    // Ochrana před vyjetím mimo pravou stranu.
+
+    if (
+        left +
+        bubbleRect.width >
+        window.innerWidth -
+        10
+    ) {
+
+        left =
+            window.innerWidth -
+            bubbleRect.width -
+            10;
+
+    }
+
+
+    // Pokud je video částečně mimo obrazovku,
+    // bublinu stále udržíme na obrazovce.
+
+    if (
+        top <
+        10
+    ) {
+
+        top =
+            10;
+
+    }
+
+
+    bubble.style.left =
+        left +
+        "px";
+
+
+    bubble.style.top =
+        top +
+        "px";
+
+
+    // --------------------------------------------------------
+    // ZOBRAZENÍ
+    // --------------------------------------------------------
+
+    requestAnimationFrame(
+        function() {
+
+            bubble.style.opacity =
+                "1";
+
+        }
+    );
+
+
+    console.log(
+        "CHAOS TREND: zobrazena bublina po skončení videa."
+    );
+
+
+    // --------------------------------------------------------
+    // PO 8 SEKUNDÁCH ZAČNE BUBLINU SCHOVÁVAT
+    // --------------------------------------------------------
+
+    chaosLikeBubbleTimer =
+        setTimeout(
+            function() {
+
+                bubble.style.opacity =
+                    "0";
+
+
+                // Po dokončení fade-out
+                // bublinu úplně odstraníme.
+
+                chaosLikeBubbleHideTimer =
+                    setTimeout(
+                        function() {
+
+                            if (
+                                bubble &&
+                                bubble.parentNode
+                            ) {
+
+                                bubble.remove();
+
+                            }
+
+                        },
+                        500
+                    );
+
+            },
+            8000
+        );
+
+}
+
+
+// ============================================================
+// 6. REAKCE NA STAV HLAVNÍHO YOUTUBE VIDEA
+// ============================================================
+
+function chaosMainYouTubeStateChange(
+    event
+) {
+
+    if (
+        !window.YT
+    ) {
+
+        return;
+
+    }
+
+
+    // 0 = ENDED
+    if (
+        event.data ===
+        YT.PlayerState.ENDED
+    ) {
+
+        console.log(
+            "CHAOS TREND: HLAVNÍ VIDEO SKONČILO."
+        );
+
+
+        showChaosLikeBubble();
+
+    }
+
+}
+
+
+// ============================================================
+// 7. VYTVOŘENÍ / PŘIPOJENÍ YOUTUBE PLAYERU
+// ============================================================
+
+async function setupChaosMainYouTubePlayer(
+    videoId
+) {
+
+    const iframe =
+        document.getElementById(
+            "chaos-opinion-main-video"
+        );
+
+
+    if (
+        !iframe ||
+        !videoId
+    ) {
+
+        return;
+
+    }
+
+
+    chaosMainVideoPendingId =
+        videoId;
+
+
+    try {
+
+        await loadChaosYouTubeAPI();
+
+    } catch (error) {
+
+        console.error(
+            "CHAOS TREND: YouTube IFrame API se nepodařilo načíst.",
+            error
+        );
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // PLAYER UŽ EXISTUJE
+    // --------------------------------------------------------
+
+    if (
+        chaosMainYouTubePlayer
+    ) {
+
+        try {
+
+            chaosMainYouTubePlayer.mute();
+
+            chaosMainYouTubePlayer.cueVideoById(
+                videoId
+            );
+
+            return;
+
+        } catch (error) {
+
+            console.warn(
+                "CHAOS TREND: existující YouTube player nelze použít, vytvářím nový.",
+                error
+            );
+
+
+            chaosMainYouTubePlayer =
+                null;
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // VYTVOŘENÍ NOVÉHO PLAYERU
+    // --------------------------------------------------------
+
+    try {
+
+        chaosMainYouTubePlayer =
+            new YT.Player(
+                iframe,
+                {
+
+                    events: {
+
+                        onReady:
+                            function(event) {
+
+                                console.log(
+                                    "CHAOS TREND: hlavní YouTube player je připraven."
+                                );
+
+
+                                try {
+
+                                    event.target.mute();
+
+                                    if (
+                                        chaosMainVideoPendingId
+                                    ) {
+
+                                        event.target.cueVideoById(
+                                            chaosMainVideoPendingId
+                                        );
+
+                                    }
+
+                                } catch (error) {
+
+                                    console.warn(
+                                        "CHAOS TREND: nepodařilo se připravit hlavní video.",
+                                        error
+                                    );
+
+                                }
+
+                            },
+
+
+                        onStateChange:
+                            chaosMainYouTubeStateChange
+
+                    }
+
+                }
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "CHAOS TREND: nepodařilo se vytvořit YouTube player.",
+            error
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// 8. ZOBRAZENÍ HLAVNÍHO VIDEA
+// ============================================================
+
+function displayMainVideo(
+    video
+) {
 
     const iframe =
         document.getElementById(
@@ -172,7 +838,10 @@ function displayMainVideo(video) {
         );
 
 
-    if (!iframe || !video) {
+    if (
+        !iframe ||
+        !video
+    ) {
 
         console.error(
             "CHAOS TREND: hlavní video nebo jeho kontejner nebyl nalezen."
@@ -183,11 +852,60 @@ function displayMainVideo(video) {
     }
 
 
-    iframe.src =
-        "https://www.youtube.com/embed/" +
-        video.id +
-        "?autoplay=0&mute=1&playsinline=1&rel=0";
+    chaosMainVideoPendingId =
+        video.id;
 
+
+    // --------------------------------------------------------
+    // SKRYJEME PŘÍPADNOU STAROU BUBLINU
+    // --------------------------------------------------------
+
+    const oldBubble =
+        document.getElementById(
+            "chaos-like-bubble"
+        );
+
+
+    if (
+        oldBubble
+    ) {
+
+        oldBubble.remove();
+
+    }
+
+
+    if (
+        chaosLikeBubbleTimer
+    ) {
+
+        clearTimeout(
+            chaosLikeBubbleTimer
+        );
+
+        chaosLikeBubbleTimer =
+            null;
+
+    }
+
+
+    if (
+        chaosLikeBubbleHideTimer
+    ) {
+
+        clearTimeout(
+            chaosLikeBubbleHideTimer
+        );
+
+        chaosLikeBubbleHideTimer =
+            null;
+
+    }
+
+
+    // --------------------------------------------------------
+    // INFORMACE PRO IFRAME
+    // --------------------------------------------------------
 
     iframe.title =
         video.title;
@@ -197,10 +915,97 @@ function displayMainVideo(video) {
         "block";
 
 
-    if (placeholder) {
+    if (
+        placeholder
+    ) {
 
         placeholder.style.display =
             "none";
+
+    }
+
+
+    // --------------------------------------------------------
+    // POKUD PLAYER JEŠTĚ NENÍ VYTVOŘENÝ
+    // --------------------------------------------------------
+
+    if (
+        !chaosMainYouTubePlayer
+    ) {
+
+        const origin =
+            window.location.origin;
+
+
+        iframe.src =
+            "https://www.youtube.com/embed/" +
+            video.id +
+            "?autoplay=0" +
+            "&mute=1" +
+            "&playsinline=1" +
+            "&rel=0" +
+            "&enablejsapi=1" +
+            "&origin=" +
+            encodeURIComponent(
+                origin
+            );
+
+
+        setupChaosMainYouTubePlayer(
+            video.id
+        );
+
+
+    } else {
+
+        // ----------------------------------------------------
+        // PLAYER UŽ EXISTUJE
+        // ----------------------------------------------------
+
+        try {
+
+            chaosMainYouTubePlayer.mute();
+
+            chaosMainYouTubePlayer.cueVideoById(
+                video.id
+            );
+
+
+        } catch (error) {
+
+            console.warn(
+                "CHAOS TREND: nepodařilo se přepnout existující player.",
+                error
+            );
+
+
+            chaosMainYouTubePlayer =
+                null;
+
+
+            const origin =
+                window.location.origin;
+
+
+            iframe.src =
+                "https://www.youtube.com/embed/" +
+                video.id +
+                "?autoplay=0" +
+                "&mute=1" +
+                "&playsinline=1" +
+                "&rel=0" +
+                "&enablejsapi=1" +
+                "&origin=" +
+                encodeURIComponent(
+                    origin
+                );
+
+
+            setupChaosMainYouTubePlayer(
+                video.id
+            );
+
+        }
 
     }
 
@@ -216,20 +1021,26 @@ function displayMainVideo(video) {
 
 
 // ============================================================
-// 4.5 ZNĚLKA PŘED PŘEPNUTÍM VIDEA
+// 9. ZNĚLKA PŘED PŘEPNUTÍM VIDEA
 // ============================================================
 
 const chaosTrendJingle =
-    new Audio("znelka.m4a");
+    new Audio(
+        "znelka.m4a"
+    );
 
 
 chaosTrendJingle.preload =
     "auto";
 
 
-function playJingleThenVideo(video) {
+function playJingleThenVideo(
+    video
+) {
 
-    if (!video) {
+    if (
+        !video
+    ) {
 
         return;
 
@@ -252,7 +1063,9 @@ function playJingleThenVideo(video) {
     chaosTrendJingle.onended =
         function() {
 
-            displayMainVideo(video);
+            displayMainVideo(
+                video
+            );
 
         };
 
@@ -261,7 +1074,9 @@ function playJingleThenVideo(video) {
         chaosTrendJingle.play();
 
 
-    if (playPromise !== undefined) {
+    if (
+        playPromise !== undefined
+    ) {
 
         playPromise.catch(
             function(error) {
@@ -272,7 +1087,9 @@ function playJingleThenVideo(video) {
                 );
 
 
-                displayMainVideo(video);
+                displayMainVideo(
+                    video
+                );
 
             }
         );
@@ -283,21 +1100,13 @@ function playJingleThenVideo(video) {
 
 
 // ============================================================
-// 4.6 INFORMAČNÍ BUBLINKA
-//
-// DŮLEŽITÉ:
-// Bublina se NEVKLÁDÁ do karty videa.
-// Vkládá se přímo do BODY stránky.
-// Tím ji nemůže překrýt YouTube iframe ani clickOverlay.
+// 10. STÁVAJÍCÍ INFORMAČNÍ BUBLINKA
+// „JAK TO FUNGUJE?“
 // ============================================================
 
 function showChaosInfoBubble(
     video
 ) {
-
-    // --------------------------------------------------------
-    // Pokud už nějaká bublina existuje, odstraníme ji
-    // --------------------------------------------------------
 
     const oldBubble =
         document.getElementById(
@@ -305,19 +1114,19 @@ function showChaosInfoBubble(
         );
 
 
-    if (oldBubble) {
+    if (
+        oldBubble
+    ) {
 
         oldBubble.remove();
 
     }
 
 
-    // --------------------------------------------------------
-    // CELOPLOŠNÝ OBAL
-    // --------------------------------------------------------
-
     const overlay =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     overlay.id =
@@ -384,12 +1193,10 @@ function showChaosInfoBubble(
         "20px";
 
 
-    // --------------------------------------------------------
-    // VLASTNÍ BUBLINKA
-    // --------------------------------------------------------
-
     const bubble =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     bubble.className =
@@ -444,12 +1251,10 @@ function showChaosInfoBubble(
         "auto";
 
 
-    // --------------------------------------------------------
-    // TEXT
-    // --------------------------------------------------------
-
     const text =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     text.className =
@@ -481,12 +1286,10 @@ function showChaosInfoBubble(
     );
 
 
-    // --------------------------------------------------------
-    // TLAČÍTKO
-    // --------------------------------------------------------
-
     const button =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
 
     button.type =
@@ -553,10 +1356,6 @@ function showChaosInfoBubble(
         "2147483647";
 
 
-    // --------------------------------------------------------
-    // KLIKNUTÍ NA „ROZUMÍM“
-    // --------------------------------------------------------
-
     button.addEventListener(
         "click",
         function(event) {
@@ -571,17 +1370,12 @@ function showChaosInfoBubble(
             );
 
 
-            // ------------------------------------------------
-            // ULOŽENÍ POTVRZENÍ
-            // ------------------------------------------------
-
             try {
 
                 localStorage.setItem(
                     CHAOS_INFO_ACCEPTED_KEY,
                     "true"
                 );
-
 
             } catch (error) {
 
@@ -593,16 +1387,8 @@ function showChaosInfoBubble(
             }
 
 
-            // ------------------------------------------------
-            // ODSTRANĚNÍ BUBLINY
-            // ------------------------------------------------
-
             overlay.remove();
 
-
-            // ------------------------------------------------
-            // SPUŠTĚNÍ ZNĚLKY
-            // ------------------------------------------------
 
             playJingleThenVideo(
                 video
@@ -617,18 +1403,10 @@ function showChaosInfoBubble(
     );
 
 
-    // --------------------------------------------------------
-    // BUBLINU VLOŽÍME DO CELOPLOŠNÉHO OVERLAYE
-    // --------------------------------------------------------
-
     overlay.appendChild(
         bubble
     );
 
-
-    // --------------------------------------------------------
-    // OVERLAY VLOŽÍME PŘÍMO DO BODY
-    // --------------------------------------------------------
 
     document.body.appendChild(
         overlay
@@ -643,10 +1421,12 @@ function showChaosInfoBubble(
 
 
 // ============================================================
-// 5. ZOBRAZENÍ HISTORIE VIDEÍ
+// 11. ZOBRAZENÍ HISTORIE VIDEÍ
 // ============================================================
 
-function displayHistoryVideos(videos) {
+function displayHistoryVideos(
+    videos
+) {
 
     const container =
         document.getElementById(
@@ -654,7 +1434,9 @@ function displayHistoryVideos(videos) {
         );
 
 
-    if (!container) {
+    if (
+        !container
+    ) {
 
         console.error(
             "CHAOS TREND: kontejner historie nebyl nalezen."
@@ -669,28 +1451,6 @@ function displayHistoryVideos(videos) {
         "";
 
 
-    /*
-        VIDEO 0
-        = nejnovější video
-        = velké hlavní okno
-
-
-        VIDEO 1
-        = první historické okno
-
-
-        VIDEO 2
-        = druhé historické okno
-
-
-        VIDEO 3
-        = třetí historické okno
-
-
-        atd.
-    */
-
-
     for (
         let i = 1;
         i < videos.length;
@@ -701,12 +1461,10 @@ function displayHistoryVideos(videos) {
             videos[i];
 
 
-        // ----------------------------------------------------
-        // KARTA VIDEA
-        // ----------------------------------------------------
-
         const item =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         item.className =
@@ -720,10 +1478,6 @@ function displayHistoryVideos(videos) {
         item.style.position =
             "relative";
 
-
-        // ----------------------------------------------------
-        // ZAMEZENÍ TEXTOVÉMU KURZORU
-        // ----------------------------------------------------
 
         item.style.userSelect =
             "none";
@@ -751,12 +1505,10 @@ function displayHistoryVideos(videos) {
         );
 
 
-        // ----------------------------------------------------
-        // KLIKACÍ VRSTVA
-        // ----------------------------------------------------
-
         const clickOverlay =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         clickOverlay.style.position =
@@ -803,10 +1555,6 @@ function displayHistoryVideos(videos) {
             -1;
 
 
-        // ----------------------------------------------------
-        // MOUSEDOWN
-        // ----------------------------------------------------
-
         clickOverlay.addEventListener(
             "mousedown",
             function(event) {
@@ -816,10 +1564,6 @@ function displayHistoryVideos(videos) {
             }
         );
 
-
-        // ----------------------------------------------------
-        // KLIKNUTÍ NA HISTORICKÉ VIDEO
-        // ----------------------------------------------------
 
         clickOverlay.addEventListener(
             "click",
@@ -841,7 +1585,6 @@ function displayHistoryVideos(videos) {
                             CHAOS_INFO_ACCEPTED_KEY
                         ) === "true";
 
-
                 } catch (error) {
 
                     console.warn(
@@ -852,25 +1595,18 @@ function displayHistoryVideos(videos) {
                 }
 
 
-                // ------------------------------------------------
-                // PRVNÍ KLIKNUTÍ
-                // ------------------------------------------------
-
-                if (!infoAccepted) {
+                if (
+                    !infoAccepted
+                ) {
 
                     showChaosInfoBubble(
                         video
                     );
 
-
                     return;
 
                 }
 
-
-                // ------------------------------------------------
-                // DALŠÍ KLIKNUTÍ
-                // ------------------------------------------------
 
                 playJingleThenVideo(
                     video
@@ -885,12 +1621,10 @@ function displayHistoryVideos(videos) {
         );
 
 
-        // ----------------------------------------------------
-        // YOUTUBE IFRAME
-        // ----------------------------------------------------
-
         const iframe =
-            document.createElement("iframe");
+            document.createElement(
+                "iframe"
+            );
 
 
         iframe.src =
@@ -924,12 +1658,10 @@ function displayHistoryVideos(videos) {
         );
 
 
-        // ----------------------------------------------------
-        // NÁZEV VIDEA
-        // ----------------------------------------------------
-
         const title =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         title.className =
@@ -957,12 +1689,10 @@ function displayHistoryVideos(videos) {
         );
 
 
-        // ----------------------------------------------------
-        // DATUM
-        // ----------------------------------------------------
-
         const date =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         date.className =
@@ -970,7 +1700,9 @@ function displayHistoryVideos(videos) {
 
 
         date.textContent =
-            formatDate(video.date);
+            formatDate(
+                video.date
+            );
 
 
         date.style.userSelect =
@@ -990,10 +1722,6 @@ function displayHistoryVideos(videos) {
         );
 
 
-        // ----------------------------------------------------
-        // PŘIDÁNÍ DO HISTORIE
-        // ----------------------------------------------------
-
         container.appendChild(
             item
         );
@@ -1012,25 +1740,36 @@ function displayHistoryVideos(videos) {
 
 
 // ============================================================
-// 6. FORMÁT DATA
+// 12. FORMÁT DATA
 // ============================================================
 
-function formatDate(date) {
+function formatDate(
+    date
+) {
 
-    if (!date) {
+    if (
+        !date
+    ) {
 
         return "";
 
     }
 
 
-    return new Date(date)
+    return new Date(
+        date
+    )
         .toLocaleDateString(
             "cs-CZ",
             {
-                day: "numeric",
-                month: "numeric",
-                year: "numeric"
+                day:
+                    "numeric",
+
+                month:
+                    "numeric",
+
+                year:
+                    "numeric"
             }
         );
 
@@ -1038,7 +1777,7 @@ function formatDate(date) {
 
 
 // ============================================================
-// 7. HLAVNÍ FUNKCE
+// 13. HLAVNÍ FUNKCE
 // ============================================================
 
 async function loadChaosTrendYouTube() {
@@ -1061,11 +1800,15 @@ async function loadChaosTrendYouTube() {
 
 
         let videos =
-            prepareYouTubeVideos(items);
+            prepareYouTubeVideos(
+                items
+            );
 
 
         videos =
-            sortVideosByDate(videos);
+            sortVideosByDate(
+                videos
+            );
 
 
         console.log(
@@ -1078,7 +1821,9 @@ async function loadChaosTrendYouTube() {
             videos;
 
 
-        if (videos.length > 0) {
+        if (
+            videos.length > 0
+        ) {
 
             displayMainVideo(
                 videos[0]
@@ -1170,7 +1915,9 @@ function updateChaosClock() {
         );
 
 
-    if (hourHand) {
+    if (
+        hourHand
+    ) {
 
         hourHand.style.transform =
             "rotate(" +
@@ -1180,7 +1927,9 @@ function updateChaosClock() {
     }
 
 
-    if (minuteHand) {
+    if (
+        minuteHand
+    ) {
 
         minuteHand.style.transform =
             "rotate(" +
@@ -1190,7 +1939,9 @@ function updateChaosClock() {
     }
 
 
-    if (secondHand) {
+    if (
+        secondHand
+    ) {
 
         secondHand.style.transform =
             "rotate(" +
@@ -1203,8 +1954,12 @@ function updateChaosClock() {
     const pad =
         function(number) {
 
-            return String(number)
-                .padStart(2, "0");
+            return String(
+                number
+            ).padStart(
+                2,
+                "0"
+            );
 
         };
 
@@ -1215,7 +1970,9 @@ function updateChaosClock() {
         );
 
 
-    if (digitalClock) {
+    if (
+        digitalClock
+    ) {
 
         digitalClock.textContent =
             pad(hours) +
@@ -1233,15 +1990,22 @@ function updateChaosClock() {
         );
 
 
-    if (dateElement) {
+    if (
+        dateElement
+    ) {
 
         dateElement.textContent =
             now.toLocaleDateString(
                 "cs-CZ",
                 {
-                    day: "numeric",
-                    month: "numeric",
-                    year: "numeric"
+                    day:
+                        "numeric",
+
+                    month:
+                        "numeric",
+
+                    year:
+                        "numeric"
                 }
             );
 
