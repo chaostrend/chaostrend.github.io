@@ -970,7 +970,52 @@
 
     © 2026 Josef Čáp – CHAOS TREND
 
+    <a href="#"
+       class="youtube-qr-link"
+       onclick="openYouTubeQR(event)">
+
+        ▣ YouTube
+
+    </a>
+
 </footer>
+
+
+<!-- =========================
+     QR KÓD YOUTUBE
+     ========================= -->
+
+<div class="youtube-qr-overlay"
+     id="youtube-qr-overlay"
+     onclick="closeYouTubeQR(event)">
+
+    <div class="youtube-qr-box"
+         onclick="event.stopPropagation()">
+
+        <h2>
+            YouTube CHAOS TREND
+        </h2>
+
+        <p>
+            Naskenujte QR kód mobilem
+            a otevřete můj YouTube kanál.
+        </p>
+
+        <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fwww.youtube.com%2F%40josefcap153"
+            alt="QR kód YouTube CHAOS TREND">
+
+        <button class="youtube-qr-close"
+                type="button"
+                onclick="closeYouTubeQR()">
+
+            Zavřít
+
+        </button>
+
+    </div>
+
+</div>
 
 
 <!-- =========================
@@ -1375,21 +1420,38 @@ if (
 
 }
 
-</script><script>
 
-    /* KONTAKT */
-    function openContact(event) {
-        ...
+/* =========================
+   QR KÓD YOUTUBE
+   ========================= */
+
+function openYouTubeQR(event) {
+
+    if (event) {
+        event.preventDefault();
     }
 
-    ...
+    document.getElementById(
+        "youtube-qr-overlay"
+    ).style.display = "flex";
 
-    /* VYBRANÁ VIDEA */
-    const featuredVideos = [
-        ...
-    ];
+}
 
-    ...
+
+function closeYouTubeQR(event) {
+
+    if (
+        event &&
+        event.target !== event.currentTarget
+    ) {
+        return;
+    }
+
+    document.getElementById(
+        "youtube-qr-overlay"
+    ).style.display = "none";
+
+}
 
 </script>
 
