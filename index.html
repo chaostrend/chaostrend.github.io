@@ -5,7 +5,8 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>CHAOS TREND – Josef Čáp</title>
 
@@ -1351,6 +1352,63 @@ const chaosOpinionJingleButton =
     document.getElementById("chaos-opinion-jingle-button");
 
 
+/*
+   Pomocná funkce:
+   počká, až bude YouTube přehrávač připraven,
+   a potom spustí právě vybrané nejnovější video.
+*/
+
+function playChaosNewestVideoWhenReady() {
+
+    let attempts = 0;
+
+    const maxAttempts = 100;
+
+    const tryToPlay = function() {
+
+        attempts++;
+
+        if (
+            typeof chaosMainYouTubePlayer !== "undefined" &&
+            chaosMainYouTubePlayer &&
+            typeof chaosMainYouTubePlayer.playVideo === "function"
+        ) {
+
+            console.log(
+                "CHAOS TREND: spouštím nejnovější video."
+            );
+
+            chaosMainYouTubePlayer.playVideo();
+
+            return;
+
+        }
+
+
+        if (attempts < maxAttempts) {
+
+            setTimeout(
+                tryToPlay,
+                100
+            );
+
+            return;
+
+        }
+
+
+        console.error(
+            "CHAOS TREND: YouTube přehrávač nebyl včas připraven."
+        );
+
+    };
+
+
+    tryToPlay();
+
+}
+
+
 if (
     chaosOpinionJingle &&
     chaosOpinionJingleButton
@@ -1358,60 +1416,134 @@ if (
 
     chaosOpinionJingleButton.addEventListener(
         "click",
-        function() {
+        async function() {
 
-            chaosOpinionJingle.currentTime = 0;
+            try {
 
-            chaosOpinionJingle.play()
-                .then(function() {
+                chaosOpinionJingleButton.disabled =
+                    true;
 
-                    chaosOpinionJingleButton.textContent =
-                        "🔊 Znělka právě hraje…";
+                chaosOpinionJingleButton.textContent =
+                    "🔊 Načítám dnešní video…";
 
-                    chaosOpinionJingleButton.disabled =
-                        true;
 
-                })
-                .catch(function(error) {
+                /*
+                   Znovu načteme playlist přímo při kliknutí.
+                   Tím máme jistotu, že vybíráme skutečně
+                   nejnovější video.
+                */
 
-                    console.error(
-                        "CHAOS TREND: Znělku se nepodařilo přehrát.",
-                        error
+                const items =
+                    await getChaosOpinionPlaylistVideos();
+
+
+                let videos =
+                    prepareYouTubeVideos(
+                        items
                     );
 
-                });
 
-        }
-    );
-
-
-    chaosOpinionJingle.addEventListener(
-        "ended",
-        function() {
-
-            chaosOpinionJingleButton.textContent =
-                "▶ Spustit znělku znovu";
-
-            chaosOpinionJingleButton.disabled =
-                false;
+                videos =
+                    sortVideosByDate(
+                        videos
+                    );
 
 
-            const mainVideo =
-                document.getElementById(
-                    "chaos-opinion-main-video"
+                if (
+                    !videos ||
+                    videos.length === 0
+                ) {
+
+                    throw new Error(
+                        "Playlist neobsahuje žádné video."
+                    );
+
+                }
+
+
+                /*
+                   První video po seřazení je nejnovější.
+                */
+
+                const newestVideo =
+                    videos[0];
+
+
+                console.log(
+                    "CHAOS TREND: dnešní nejnovější video:",
+                    newestVideo.title,
+                    newestVideo.id,
+                    newestVideo.date
                 );
 
 
-            if (
-                mainVideo &&
-                mainVideo.src
-            ) {
+                /*
+                   Uložíme aktuální seznam také do globálního
+                   seznamu používaného webem.
+                */
 
-                mainVideo.src =
-                    mainVideo.src.replace(
-                        "autoplay=0",
-                        "autoplay=1"
-                    );
+                window.chaosTrendYouTubeVideos =
+                    videos;
+
+
+                /*
+                   Nejnovější video připravíme do hlavního
+                   přehrávače, ale zatím ho nespouštíme.
+                */
+
+                displayMainVideo(
+                    newestVideo
+                );
+
+
+                /*
+                   Po skončení znělky spustíme připravené
+                   nejnovější video.
+                */
+
+                chaosOpinionJingle.onended =
+                    function() {
+
+                        chaosOpinionJingleButton.textContent =
+                            "▶ Spustit znělku znovu";
+
+                        chaosOpinionJingleButton.disabled =
+                            false;
+
+
+                        playChaosNewestVideoWhenReady();
+
+                    };
+
+
+                /*
+                   Spustíme znělku.
+                */
+
+                chaosOpinionJingle.currentTime =
+                    0;
+
+
+                await chaosOpinionJingle.play();
+
+
+                chaosOpinionJingleButton.textContent =
+                    "🔊 Znělka právě hraje…";
+
+
+            } catch (error) {
+
+                console.error(
+                    "CHAOS TREND: Nepodařilo se spustit dnešní video.",
+                    error
+                );
+
+
+                chaosOpinionJingleButton.textContent =
+                    "▶ Spustit dnešní video";
+
+                chaosOpinionJingleButton.disabled =
+                    false;
 
             }
 
