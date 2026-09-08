@@ -1381,3 +1381,121 @@ footer {
 .chaos-info-button:hover {
     opacity: 0.85;
 }
+/* ============================================================
+   CHAOS TREND – QR ODKAZ NA YOUTUBE
+   ============================================================ */
+
+.youtube-qr-link {
+    display: inline-block;
+
+    margin-left: 12px;
+
+    color: #777;
+    text-decoration: none;
+
+    font-size: 13px;
+
+    transition: 0.2s ease;
+
+    cursor: pointer;
+}
+
+.youtube-qr-link:hover {
+    color: #fff;
+}
+
+
+/* QR OKNO */
+
+.youtube-qr-overlay {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 6000;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0,0,0,0.78);
+
+    backdrop-filter: blur(8px);
+}
+
+
+.youtube-qr-box {
+    width: 100%;
+    max-width: 360px;
+
+    padding: 30px 25px;
+
+    text-align: center;
+
+    background: #0c1020;
+
+    border: 1px solid rgba(255,255,255,0.15);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.6);
+}
+
+
+.youtube-qr-box h2 {
+    margin-bottom: 8px;
+}
+
+
+.youtube-qr-box p {
+    color: #aaa;
+
+    font-size: 14px;
+
+    margin-bottom: 15px;
+}
+
+
+.youtube-qr-box img {
+    display: block;
+
+    width: 220px;
+    height: 220px;
+
+    margin: 15px auto 20px;
+
+    padding: 10px;
+
+    background: #fff;
+
+    border-radius: 12px;
+}
+
+
+.youtube-qr-close {
+    margin-top: 5px;
+
+    padding: 10px 22px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: #050712;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.youtube-qr-close:hover {
+    transform: translateY(-2px);
+}
