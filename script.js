@@ -220,7 +220,7 @@ function displayMainVideo(video) {
 // ============================================================
 
 const chaosTrendJingle =
-    new Audio("znelka.mp3");
+    new Audio("znelka.m4a");
 
 
 chaosTrendJingle.preload =
