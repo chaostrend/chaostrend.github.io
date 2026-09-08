@@ -1345,92 +1345,44 @@ function createSupportQR() {
    ZNĚLKA „JAK TO VIDÍ ČÁP?“
    ========================= */
 
-const chaosOpinionJingle =
-    document.getElementById("chaos-opinion-jingle");
+(function () {
 
-const chaosOpinionJingleButton =
-    document.getElementById("chaos-opinion-jingle-button");
+    const button =
+        document.getElementById("chaos-opinion-jingle-button");
 
-
-/*
-   Pomocná funkce:
-   počká, až bude YouTube přehrávač připraven,
-   a potom spustí právě vybrané nejnovější video.
-*/
-
-function playChaosNewestVideoWhenReady() {
-
-    let attempts = 0;
-
-    const maxAttempts = 100;
-
-    const tryToPlay = function() {
-
-        attempts++;
-
-        if (
-            typeof chaosMainYouTubePlayer !== "undefined" &&
-            chaosMainYouTubePlayer &&
-            typeof chaosMainYouTubePlayer.playVideo === "function"
-        ) {
-
-            console.log(
-                "CHAOS TREND: spouštím nejnovější video."
-            );
-
-            chaosMainYouTubePlayer.playVideo();
-
-            return;
-
-        }
+    const jingle =
+        document.getElementById("chaos-opinion-jingle");
 
 
-        if (attempts < maxAttempts) {
-
-            setTimeout(
-                tryToPlay,
-                100
-            );
-
-            return;
-
-        }
-
+    if (!button || !jingle) {
 
         console.error(
-            "CHAOS TREND: YouTube přehrávač nebyl včas připraven."
+            "CHAOS TREND: tlačítko nebo znělka nebyly nalezeny."
         );
 
-    };
+        return;
+    }
 
 
-    tryToPlay();
-
-}
-
-
-if (
-    chaosOpinionJingle &&
-    chaosOpinionJingleButton
-) {
-
-    chaosOpinionJingleButton.addEventListener(
+    button.addEventListener(
         "click",
-        async function() {
+        async function () {
+
+            console.log(
+                "CHAOS TREND: KLIKNUTÍ NA TLAČÍTKO DNEŠNÍHO VIDEA."
+            );
+
 
             try {
 
-                chaosOpinionJingleButton.disabled =
-                    true;
+                button.disabled = true;
 
-                chaosOpinionJingleButton.textContent =
+                button.textContent =
                     "🔊 Načítám dnešní video…";
 
 
                 /*
-                   Znovu načteme playlist přímo při kliknutí.
-                   Tím máme jistotu, že vybíráme skutečně
-                   nejnovější video.
+                   Znovu načteme aktuální playlist.
                 */
 
                 const items =
@@ -1438,15 +1390,11 @@ if (
 
 
                 let videos =
-                    prepareYouTubeVideos(
-                        items
-                    );
+                    prepareYouTubeVideos(items);
 
 
                 videos =
-                    sortVideosByDate(
-                        videos
-                    );
+                    sortVideosByDate(videos);
 
 
                 if (
@@ -1470,7 +1418,7 @@ if (
 
 
                 console.log(
-                    "CHAOS TREND: dnešní nejnovější video:",
+                    "CHAOS TREND: NEJNOVĚJŠÍ VIDEO:",
                     newestVideo.title,
                     newestVideo.id,
                     newestVideo.date
@@ -1478,8 +1426,7 @@ if (
 
 
                 /*
-                   Uložíme aktuální seznam také do globálního
-                   seznamu používaného webem.
+                   Uložíme aktuální seznam.
                 */
 
                 window.chaosTrendYouTubeVideos =
@@ -1487,8 +1434,8 @@ if (
 
 
                 /*
-                   Nejnovější video připravíme do hlavního
-                   přehrávače, ale zatím ho nespouštíme.
+                   Připravíme nejnovější video
+                   do hlavního přehrávače.
                 */
 
                 displayMainVideo(
@@ -1497,21 +1444,70 @@ if (
 
 
                 /*
-                   Po skončení znělky spustíme připravené
-                   nejnovější video.
+                   Po skončení znělky spustíme
+                   právě připravené nejnovější video.
                 */
 
-                chaosOpinionJingle.onended =
-                    function() {
+                jingle.onended =
+                    function () {
 
-                        chaosOpinionJingleButton.textContent =
+                        console.log(
+                            "CHAOS TREND: ZNĚLKA SKONČILA – SPUŠTĚNÍ NEJNOVĚJŠÍHO VIDEA."
+                        );
+
+
+                        button.disabled = false;
+
+                        button.textContent =
                             "▶ Spustit znělku znovu";
 
-                        chaosOpinionJingleButton.disabled =
-                            false;
+
+                        let attempts = 0;
+
+                        const tryPlay =
+                            function () {
+
+                                attempts++;
 
 
-                        playChaosNewestVideoWhenReady();
+                                if (
+                                    typeof chaosMainYouTubePlayer !== "undefined" &&
+                                    chaosMainYouTubePlayer &&
+                                    typeof chaosMainYouTubePlayer.playVideo === "function"
+                                ) {
+
+                                    console.log(
+                                        "CHAOS TREND: PŘEHRÁVÁM:",
+                                        newestVideo.title,
+                                        newestVideo.id
+                                    );
+
+
+                                    chaosMainYouTubePlayer.playVideo();
+
+                                    return;
+                                }
+
+
+                                if (attempts < 100) {
+
+                                    setTimeout(
+                                        tryPlay,
+                                        100
+                                    );
+
+                                    return;
+                                }
+
+
+                                console.error(
+                                    "CHAOS TREND: YouTube player není připraven."
+                                );
+
+                            };
+
+
+                        tryPlay();
 
                     };
 
@@ -1520,37 +1516,39 @@ if (
                    Spustíme znělku.
                 */
 
-                chaosOpinionJingle.currentTime =
-                    0;
+                jingle.currentTime = 0;
+
+                await jingle.play();
 
 
-                await chaosOpinionJingle.play();
-
-
-                chaosOpinionJingleButton.textContent =
+                button.textContent =
                     "🔊 Znělka právě hraje…";
 
 
             } catch (error) {
 
                 console.error(
-                    "CHAOS TREND: Nepodařilo se spustit dnešní video.",
+                    "CHAOS TREND: Chyba při spuštění dnešního videa:",
                     error
                 );
 
 
-                chaosOpinionJingleButton.textContent =
-                    "▶ Spustit dnešní video";
+                button.disabled = false;
 
-                chaosOpinionJingleButton.disabled =
-                    false;
+                button.textContent =
+                    "▶ Spustit dnešní video";
 
             }
 
         }
     );
 
-}
+
+    console.log(
+        "CHAOS TREND: tlačítko „Spustit dnešní video“ je připraveno."
+    );
+
+})();
 
 
 /* =========================
